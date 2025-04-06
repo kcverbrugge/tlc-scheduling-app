@@ -12,6 +12,10 @@ This template equips you with a foundational React application integrated with A
 - **API**: Ready-to-use GraphQL endpoint with AWS AppSync.
 - **Database**: Real-time database powered by Amazon DynamoDB.
 
+## Setting up local environment
+
+For detailed instructions on how to set up the local development environmewnt, refer to [amplify docs](https://docs.amplify.aws/react/start/quickstart/#4-set-up-local-environment).
+
 ## Deploying to AWS
 
 For detailed instructions on deploying your application, refer to the [deployment section](https://docs.amplify.aws/react/start/quickstart/#deploy-a-fullstack-app-to-aws) of our documentation.
