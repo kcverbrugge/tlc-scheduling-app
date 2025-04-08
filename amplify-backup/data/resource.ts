@@ -8,7 +8,8 @@ specifies that any user authenticated via an API key can "create", "read",
 =========================================================================*/
 const schema = a
   .schema({
-    Tutor: a.model({
+    Tutor: a
+      .model({
         // tutorId: a.id().required(),
         // fields can be of various scalar types,
         // such as string, boolean, float, integers etc.
