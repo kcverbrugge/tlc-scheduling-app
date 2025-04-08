@@ -16,26 +16,27 @@ function App() {
     });
   }, []);
 
-  function createTodo() {
-    client.models.Tutor.create({ firstName: window.prompt("Todo content"), lastName: window.prompt("Todo content") });
+  function createTutor() {
+    client.models.Tutor.create({ firstName: window.prompt("First Name"), lastName: window.prompt("Last Name") });
   }
 
     
-  function deleteTodo(id: string) {
+  function deleteTutor(id: string) {
     client.models.Tutor.delete({ id })
   }
 
   return (
     <main>
-      <h1>{user?.signInDetails?.loginId}'s todos</h1>
-      <button onClick={createTodo}>+ new</button>
+      {/* <h1>{user?.signInDetails?.loginId}'s Todos </h1> */}
+      <h1>Tutors</h1>
+      <button onClick={createTutor}>+ new Tutor</button>
       <ul>
         {tutors.map((Tutor) => (
-          <li onClick={() => deleteTodo(Tutor.id)} key={Tutor.id}>{Tutor.firstName}, {Tutor.lastName}</li>
+          <li onClick={() => deleteTutor(Tutor.id)} key={Tutor.id}>{Tutor.firstName}, {Tutor.lastName}</li>
         ))}
       </ul>
       <div>
-        🥳 App successfully hosted. Try creating a new todo.
+        🥳 App successfully hosted. Try creating a new tutor.
         <br />
         <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
           Review next step of this tutorial.

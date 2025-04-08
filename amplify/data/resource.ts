@@ -14,6 +14,8 @@ const schema = a
         // such as string, boolean, float, integers etc.
         firstName: a.string(),
         lastName: a.string(),
+        email: a.string(),
+        classes: a.string().array(),
         // fields can be of custom types
       
         // collectionId: a.id(),
