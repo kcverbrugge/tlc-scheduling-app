@@ -8,34 +8,35 @@ const client = generateClient<Schema>();
 function App() {
   const { user, signOut } = useAuthenticator();
 
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
 
   useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
+    client.models.Tutor.observeQuery().subscribe({
+      next: (data) => setTutors([...data.items]),
     });
   }, []);
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
+  function createTutor() {
+    client.models.Tutor.create({ firstName: window.prompt("First Name"), lastName: window.prompt("Last Name") });
   }
 
     
-  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id })
+  function deleteTutor(id: string) {
+    client.models.Tutor.delete({ id })
   }
 
   return (
     <main>
-      <h1>{user?.signInDetails?.loginId}'s todos</h1>
-      <button onClick={createTodo}>+ new</button>
+      {/* <h1>{user?.signInDetails?.loginId}'s Todos </h1> */}
+      <h1>Tutors</h1>
+      <button onClick={createTutor}>+ new Tutor</button>
       <ul>
-        {todos.map((todo) => (
-          <li onClick={() => deleteTodo(todo.id)} key={todo.id}>{todo.content}</li>
+        {tutors.map((Tutor) => (
+          <li onClick={() => deleteTutor(Tutor.id)} key={Tutor.id}>{Tutor.firstName}, {Tutor.lastName}</li>
         ))}
       </ul>
       <div>
-        🥳 App successfully hosted. Try creating a new todo.
+        🥳 App successfully hosted. Try creating a new tutor.
         <br />
         <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
           Review next step of this tutorial.
