@@ -28,7 +28,7 @@ function App() {
   return (
     <main>
       {/* <h1>{user?.signInDetails?.loginId}'s Todos </h1> */}
-      <h1>Tutors</h1>
+      <center><h1>Tutors</h1></center>
       <button onClick={createTutor}>+ new Tutor</button>
       <ul>
         {tutors.map((Tutor) => (
