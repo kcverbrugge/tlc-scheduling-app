@@ -6,7 +6,9 @@ import { generateClient } from "aws-amplify/data";
 const client = generateClient<Schema>();
 
 function App() {
-  const { user, signOut } = useAuthenticator();
+  const { signOut } = useAuthenticator();
+  // Since user is not being used, the build will fail even though it is just a warning.
+  // const { user, signOut } = useAuthenticator();
 
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
 
