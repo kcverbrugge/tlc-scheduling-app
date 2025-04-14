@@ -13,7 +13,6 @@ function Admin() {
   const { signOut } = useAuthenticator();
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
 
-
   useEffect(() => {
     client.models.Tutor.observeQuery().subscribe({
       next: (data) => setTutors([...data.items]),
@@ -86,23 +85,41 @@ function FrontDesk() {
   );
 }
 
-const session = await fetchAuthSession();
-const groups = (session.tokens?.accessToken?.payload?.['cognito:groups'] as string[]) || [];
-
 function GetUser() {
   const [userGroup, setUserGroup] = useState<string | null>(null);
 
-  useEffect(() => {
-      console.log('User groups:', groups);
-      console.log('Token payload:', session.tokens?.accessToken?.payload);
+  /*
+  The issue here was caused by fetching the session outside of the useEffect hook.
+  When fetchAuthSession ran, the session data (and thus the token payload) wasn't available yet,
+  so 'groups' ended up being undefined (or an empty array). By moving the session fetch
+  inside the useEffect, we ensure that the token payload is available when we try to extract 
+  'cognito:groups', which resolves the bug.
+  */
 
-      if (groups.includes("Admin")) {
-        setUserGroup("Admin");
-      } else if (groups.includes("FrontDesk")) {
-        setUserGroup("FrontDesk");
-      } else {
+  useEffect(() => {
+    async function fetchAndSetUserGroup() { // Use an async function to fetch the session so we can wait for it to resolve before fetching
+      try {
+        const session = await fetchAuthSession(); // Fetch session when it is available
+        // Ensure we safely extract the token payload.
+        const payload = session.tokens?.accessToken?.payload;
+        console.log("Token payload:", payload);
+        const groups = (payload?.["cognito:groups"] as string[]) || [];
+        console.log("User groups:", groups.toString());
+
+        if (groups.includes("Admin")) {
+          setUserGroup("Admin");
+        } else if (groups.includes("FrontDesk")) {
+          setUserGroup("FrontDesk");
+        } else {
+          setUserGroup("Unknown");
+        }
+      } catch (err) {
+        console.error(err);
         setUserGroup("Unknown");
       }
+    }
+
+    fetchAndSetUserGroup();
   }, []);
 
   if (userGroup === "Admin") {
