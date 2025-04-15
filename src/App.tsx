@@ -29,7 +29,7 @@ function Admin() {
     if (firstName && lastName && email) {
       client.models.Tutor.create({ firstName, lastName, email });
     } else {
-      alert("All fields are required to create a tutor.");
+      alert("Are you fucking stupid you dumb bitch?");
     }
   }
 
