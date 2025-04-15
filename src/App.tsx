@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
+import { useRouter } from 'next/router';
 
 const client = generateClient<Schema>();
 
@@ -9,6 +10,21 @@ function App() {
   const { signOut } = useAuthenticator();
   // Since user is not being used, the build will fail even though it is just a warning.
   // const { user, signOut } = useAuthenticator();
+
+  const router = useRouter();
+
+  const goToHomePage = () => {
+    router.push('/App');
+  }
+  const goToAddPage = () => {
+    router.push('/add');
+  }
+  const goToEditPage = () => {
+    router.push('/edit');
+  }
+  const goToDeletePage = () => {
+    router.push('/delete');
+  }
 
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
 
@@ -18,33 +34,21 @@ function App() {
     });
   }, []);
 
-  function createTutor() {
-    client.models.Tutor.create({ firstName: window.prompt("First Name"), lastName: window.prompt("Last Name") });
-  }
-
-    
-  function deleteTutor(id: string) {
-    client.models.Tutor.delete({ id })
-  }
-
   return (
     <main>
-      {/* <h1>{user?.signInDetails?.loginId}'s Todos </h1> */}
-      <center><h1>Tutors</h1></center>
-      <button onClick={createTutor}>+ new Tutor</button>
-      <ul>
-        {tutors.map((Tutor) => (
-          <li onClick={() => deleteTutor(Tutor.id)} key={Tutor.id}>{Tutor.firstName}, {Tutor.lastName}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new tutor.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
-      <button onClick={signOut}>Sign out</button>
+      <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+      </head>
+      <body>
+        <div className="topnav">
+          <a onClick={signOut}>Sign Out</a>
+          <a className="active" onClick={goToHomePage}>Home</a>
+          <a onClick={goToAddPage}>Add Tutor</a>
+          <a onClick={goToEditPage}>Edit Tutor</a>
+          <a onClick={goToDeletePage}>Delete Tutor</a>
+        </div>
+        <p>App Page</p>
+      </body>
     </main>
   );
 }
