@@ -19,7 +19,15 @@ function App() {
   }, []);
 
   function createTutor() {
-    client.models.Tutor.create({ firstName: window.prompt("First Name"), lastName: window.prompt("Last Name") });
+    const firstName = window.prompt("First Name");
+    const lastName = window.prompt("Last Name");
+    const email = window.prompt("Email");
+  
+    if (firstName && lastName && email) {
+      client.models.Tutor.create({ firstName, lastName, email });
+    } else {
+      alert("All fields are required to create a tutor.");
+    }
   }
 
     
@@ -34,7 +42,7 @@ function App() {
       <button onClick={createTutor}>+ new Tutor</button>
       <ul>
         {tutors.map((Tutor) => (
-          <li onClick={() => deleteTutor(Tutor.id)} key={Tutor.id}>{Tutor.firstName}, {Tutor.lastName}</li>
+          <li onClick={() => deleteTutor(Tutor.id)} key={Tutor.id}>{Tutor.firstName}, {Tutor.lastName}, {Tutor.email}</li>
         ))}
       </ul>
       <div>
