@@ -89,6 +89,7 @@ function FrontDesk() {
 
 function GetUser() {
   const [userGroup, setUserGroup] = useState<string | null>(null);
+  const { signOut } = useAuthenticator();
 
   /*
   The issue here was caused by fetching the session outside of the useEffect hook.
@@ -130,6 +131,7 @@ function GetUser() {
     return (
       <div>
         <p>You are not part of a recognized user group.</p>
+        <button onClick={signOut}>Sign out</button>
       </div>
     );
   }
@@ -138,13 +140,11 @@ function GetUser() {
 function App() {
   return (
     <Authenticator>
-      
         <main style={{ padding: "2rem" }}>
           {/* Render the dashboard component based on the user's group */}
           <GetUser />
           {/* Sign out button */}
         </main>
-      
     </Authenticator>
   );
 }
