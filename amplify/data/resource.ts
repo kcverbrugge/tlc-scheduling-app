@@ -40,7 +40,8 @@ const schema = a
     Tutor: a.model({
       firstName: a.string().required(),  
       lastName: a.string().required(),         // Tutor's full name (required)
-      email: a.string().required(),          // Their email (must be unique, uniqueness enforced in identifier right below the model)
+      email: a.string(),          // Their email (must be unique, uniqueness enforced in identifier right below the model)
+      status: a.enum(['AVAILABLE', 'TUTORING', 'OVERTIME', 'UNSCHEDULED', 'OUT']),
       contactHours: a.float().default(0.0),    // Number of hours they're available
       availableCourses: a.hasMany('AvailableCourse', 'tutorId'), // One-to-many relationship
       schedules: a.hasMany('Schedule', 'tutorId'),
