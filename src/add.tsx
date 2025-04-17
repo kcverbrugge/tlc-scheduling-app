@@ -1,14 +1,13 @@
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import goToHomePage from "./App.tsx";
-import goToAddPage from "./App.tsx";
-import goToEditPage from "./App.tsx";
-import goToDeletePage from "./App.tsx";
-import "./app.css"
+import { useNavigate } from 'react-router-dom';
+import "./add.css"
 
 function Add() {
     const { signOut } = useAuthenticator();
       // Since user is not being used, the build will fail even though it is just a warning.
       // const { user, signOut } = useAuthenticator();
+
+    const navigate = useNavigate();
 
     return(
         <main>
@@ -18,10 +17,10 @@ function Add() {
           <body>
             <div className="topnav">
               <a onClick={signOut}>Sign Out</a>
-              <a onClick={goToHomePage}>Home</a>
-              <a className="active" onClick={goToAddPage}>Add Tutor</a>
-              <a onClick={goToEditPage}>Edit Tutor</a>
-              <a onClick={goToDeletePage}>Delete Tutor</a>
+              <a onClick={() => navigate('/')}>Home</a>
+              <a className="active" onClick={() => navigate('/add')}>Add Tutor</a>
+              <a onClick={() => navigate('/edit')}>Edit Tutor</a>
+              <a onClick={() => navigate('/delete')}>Delete Tutor</a>
             </div>
             <p>Add Page</p>
           </body>
