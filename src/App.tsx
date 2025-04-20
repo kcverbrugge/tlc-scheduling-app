@@ -4,7 +4,6 @@ import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { fetchAuthSession } from "aws-amplify/auth";
 import { Authenticator } from "@aws-amplify/ui-react";
-import { createTutor } from "./services/tutorServices"
 
 
 
@@ -22,14 +21,14 @@ function Admin() {
     });
   }, []);
 
-  function promptTutor() {
+  function createTutor() {
     const firstName = window.prompt("First Name");
     const lastName = window.prompt("Last Name");
     const email = window.prompt("Email");
   
-    try {
-      createTutor(firstName, lastName, email);
-    } catch {
+    if (firstName && lastName && email) {
+      client.models.Tutor.create({ firstName, lastName, email });
+    } else {
       alert("Are you fucking stupid you dumb bitch?");
     }
   }

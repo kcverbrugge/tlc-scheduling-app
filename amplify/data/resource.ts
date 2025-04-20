@@ -38,14 +38,13 @@ const schema = a
   .schema({  // Begin schema definition
     // TUTOR MODEL
     Tutor: a.model({
-      firstName: a.string(),  
-      lastName: a.string(),         // Tutor's full name (required)
-      email: a.string(),          // Their email (must be unique, uniqueness enforced in identifier right below the model)
-      status: a.enum(['AVAILABLE', 'TUTORING', 'OVERTIME', 'UNAVAILBLE', 'SICK']),
+      firstName: a.string().required(),  
+      lastName: a.string().required(),         // Tutor's full name (required)
+      email: a.string().required(),          // Their email (must be unique, uniqueness enforced in identifier right below the model)
+      status: a.enum(['AVAILABLE', 'TUTORING', 'OVERTIME', 'UNSCHEDULED', 'OUT']),
       contactHours: a.float().default(0.0),    // Number of hours they're available
       availableCourses: a.hasMany('AvailableCourse', 'tutorId'), // One-to-many relationship
       schedules: a.hasMany('Schedule', 'tutorId'),
-      appointments: a.hasMany('Appointments', 'tutorId'),
       callouts: a.hasMany('TutorCallout', 'tutorId'),
     }), // Use email as a unique identifier for Tutors
 
@@ -100,17 +99,9 @@ const schema = a
     // TUTORSESSION MODEL (real-time record of a tutor actually tutoring)
     TutorSession: a.model({
       scheduleId: a.id().required(),                      // Link to Schedule
+      schedule: a.belongsTo('Schedule', 'scheduleId'),
       startTime: a.datetime().required(),
       endTime: a.datetime(),                              // null if they're still tutoring
-    }),
-
-    TutorAppointment: a.model({
-        tutorId: a.id().required(),
-        tutor: a.belongsTo('Tutor', 'tutorId'),
-        scheduledStartTime: a.datetime().required(),
-        actualStartTime: a.datetime(),
-        endTime: a.datetime(),
-        reccuring: a.boolean(), 
     }),
 
     // TUTORCALLOUT MODEL (tutor is out that day or partially)
@@ -122,14 +113,14 @@ const schema = a
         reason: a.string().required(),
     }),
     
-  }).authorization((allow) => [allow.authenticated()]); // End schema
+  }).authorization((allow) => [allow.publicApiKey()]); // End schema
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "userPool",
+    defaultAuthorizationMode: "apiKey",
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
