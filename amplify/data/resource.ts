@@ -1,39 +1,5 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
-/*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any user authenticated via an API key can "create", "read",
-"update", and "delete" any "Todo" records.
-=========================================================================*/
-// const schema = a
-//   .schema({
-//     Tutor: a.model({
-//         // tutorId: a.id().required(),
-//         // fields can be of various scalar types,
-//         // such as string, boolean, float, integers etc.
-//         firstName: a.string(),
-//         lastName: a.string(),
-//         email: a.string(),
-//         classes: a.string().array(),
-//         // fields can be of custom types
-      
-//         // collectionId: a.id(),
-//         // collection: a.belongsTo("Collection", "collectionId")
-//         // Use custom identifiers. By default, it uses an `id: a.id()` field
-//       }),
-//       // .identifier(["name"]),
-//     // Collection: a
-//     //   .model({
-//     //     customers: a.hasMany("Customer", "collectionId"), // setup relationships between types
-//     //     tags: a.string().array(), // fields can be arrays
-//     //     representativeId: a.id().required(),
-//     //     // customize secondary indexes to optimize your query performance
-//     //   })
-//       // .secondaryIndexes((index) => [index("representativeId")]),
-  // })
-//   .authorization((allow) => [allow.publicApiKey()]);
-
 const schema = a
   .schema({  // Begin schema definition
     // TUTOR MODEL
