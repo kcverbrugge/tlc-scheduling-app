@@ -1,4 +1,5 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { STATUSES } from "../enums/statusEnum"; // ← reuse the array!
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -38,14 +39,17 @@ const schema = a
   .schema({  // Begin schema definition
     // TUTOR MODEL
     Tutor: a.model({
-      firstName: a.string().required(),  
-      lastName: a.string().required(),         // Tutor's full name (required)
-      email: a.string().required(),          // Their email (must be unique, uniqueness enforced in identifier right below the model)
-      status: a.enum(['AVAILABLE', 'TUTORING', 'OVERTIME', 'UNSCHEDULED', 'OUT']),
+      firstName: a.string(),  
+      lastName: a.string(),         // Tutor's full name (required)
+      email: a.string(),          // Their email (must be unique, uniqueness enforced in identifier right below the model)
+      // status: a.enum(['AVAILABLE', 'TUTORING', 'OVERTIME', 'UNAVAILBLE', 'CALLED-OUT']),
+      status: a.enum(STATUSES),
       contactHours: a.float().default(0.0),    // Number of hours they're available
       availableCourses: a.hasMany('AvailableCourse', 'tutorId'), // One-to-many relationship
       schedules: a.hasMany('Schedule', 'tutorId'),
-      callouts: a.hasMany('TutorCallout', 'tutorId'),
+      sessions: a.hasMany('TutorSession', 'tutorId'),
+      appointments: a.hasMany('Appointment', 'tutorId'),
+      callouts: a.hasMany('Callout', 'tutorId'),
     }), // Use email as a unique identifier for Tutors
 
     // ALLCOURSE MODEL (catalog of courses like CSCI 101)
@@ -93,19 +97,27 @@ const schema = a
       endTime: a.datetime().required(),              // When it ends
       roomId: a.id(),                                // Optional room
       room: a.belongsTo('Room', 'roomId'),
-      sessions: a.hasMany('TutorSession', 'scheduleId'),
     }),
 
     // TUTORSESSION MODEL (real-time record of a tutor actually tutoring)
     TutorSession: a.model({
-      scheduleId: a.id().required(),                      // Link to Schedule
-      schedule: a.belongsTo('Schedule', 'scheduleId'),
+      tutorId: a.id().required(),
+      tutor: a.belongsTo('Tutor', 'tutorId'),
       startTime: a.datetime().required(),
       endTime: a.datetime(),                              // null if they're still tutoring
     }),
 
-    // TUTORCALLOUT MODEL (tutor is out that day or partially)
-    TutorCallout: a.model({
+    Appointment: a.model({
+        tutorId: a.id().required(),
+        tutor: a.belongsTo('Tutor', 'tutorId'),
+        scheduledStartTime: a.datetime().required(),
+        actualStartTime: a.datetime(),
+        endTime: a.datetime(),
+        reccuring: a.boolean(), 
+    }),
+
+    // CALLOUT MODEL (tutor is out that day or partially)
+    Callout: a.model({
         tutorId: a.id().required(),
         tutor: a.belongsTo('Tutor', 'tutorId'),
         absentStart: a.datetime().required(),
@@ -113,14 +125,14 @@ const schema = a
         reason: a.string().required(),
     }),
     
-  }).authorization((allow) => [allow.publicApiKey()]); // End schema
+  }).authorization((allow) => [allow.authenticated()]); // End schema
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
+    defaultAuthorizationMode: "userPool",
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
