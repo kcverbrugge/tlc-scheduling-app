@@ -4,6 +4,7 @@ import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { fetchAuthSession } from "aws-amplify/auth";
 import { Authenticator } from "@aws-amplify/ui-react";
+import { createTutor } from "./services/tutorServices";
 
 
 
@@ -27,7 +28,7 @@ function Admin() {
     });
   }, []);
 
-  async function createTutor() {
+  async function makeTutor() {
     setShowForm(true);
     // const firstName = window.prompt("First Name");
     // const lastName = window.prompt("Last Name");
@@ -47,16 +48,24 @@ function Admin() {
     const firstName = formData.get("firstName") as string;
     const lastName = formData.get("lastName") as string;
     const email = formData.get("email") as string;
-  
-    if (firstName && lastName && email) {
-      await client.models.Tutor.create({ firstName, lastName, email }); //await to insure that the database entry is fulfilled before closing the form
-      setShowForm(false);
-      const { data: allTutors } = await client.models.Tutor.list(); //Manually get the updated list of tutors from the database to avoid stale cache
-      setTutors(allTutors.filter(t => t?.firstName && t?.lastName && t?.email)); //Filter out any tutors that are missing required fields
 
-    } else {
-      alert("Please fill out all fields.");
+    try {
+      createTutor(firstName, lastName, email);
+      setShowForm(false);
     }
+    catch(e) {
+      console.error("CREATE TUTOR ERROR: ", e);
+      alert("Failed to create a new tutor");
+    }
+    // if (firstName && lastName && email) {
+    //   await client.models.Tutor.create({ firstName, lastName, email }); //await to insure that the database entry is fulfilled before closing the form
+    //   setShowForm(false);
+      // const { data: allTutors } = await client.models.Tutor.list(); //Manually get the updated list of tutors from the database to avoid stale cache
+      // setTutors(allTutors.filter(t => t?.firstName && t?.lastName && t?.email)); //Filter out any tutors that are missing required fields
+
+    // } else {
+    //   alert("Please fill out all fields.");
+    // }
   }
 
     
@@ -87,7 +96,7 @@ function Admin() {
         <>
           <center><h1>Tutors</h1></center>
   
-          <button onClick={createTutor}> Add new Tutor</button>
+          <button onClick={makeTutor}> Add new Tutor</button>
   
           <ul>
             {tutors.map((Tutor) => (
