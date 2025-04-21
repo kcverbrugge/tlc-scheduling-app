@@ -31,3 +31,38 @@
   background-color: #04AA6D;
   color: white;
 }
+
+.searchSpace body {
+  margin: 0;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.searchSpace {
+  background: linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255));
+  overflow: hidden;
+}
+
+.searchSpace ul {
+  padding-inline-start: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+  border: 1px solid black;
+  gap: 1px;
+  background-color: black;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.searchSpace li {
+  background-color: white;
+  padding: 8px;
+}
+
+.searchSpace li:hover {
+  background: #dadbf9;
+}
+

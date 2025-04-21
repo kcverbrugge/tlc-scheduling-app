@@ -1,6 +1,6 @@
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useNavigate } from 'react-router-dom';
-import "./add.css"
+import "./addEdit.css"
 
 function Add() {
     const { signOut } = useAuthenticator();
@@ -18,9 +18,7 @@ function Add() {
             <div className="topnav">
               <a onClick={signOut}>Sign Out</a>
               <a onClick={() => navigate('/')}>Home</a>
-              <a className="active" onClick={() => navigate('/add')}>Add Tutor</a>
-              <a onClick={() => navigate('/edit')}>Edit Tutor</a>
-              <a onClick={() => navigate('/delete')}>Delete Tutor</a>
+              <a className="active" onClick={() => navigate('/addEdit')}>Add/Edit Tutor Entries</a>
             </div>
             <p>Add Page</p>
           </body>

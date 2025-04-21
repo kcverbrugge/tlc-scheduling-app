@@ -13,16 +13,16 @@ function App() {
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
 
   useEffect(() => {
-        client.models.Tutor.observeQuery().subscribe({
-          next: (data) => setTutors([...data.items]),
-        });
-      }, []);
+    client.models.Tutor.observeQuery().subscribe({
+      next: (data) => setTutors([...data.items]),
+    });
+  }, []);
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/add" element={<Add />} />
+        <Route path="/addEdit" element={<Add />} />
       </Routes>
     </Router>
   );
