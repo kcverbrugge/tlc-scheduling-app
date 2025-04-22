@@ -34,11 +34,28 @@ export async function createTutor(firstName: string | null, lastName: string | n
     throw new Error(`Email ${email.trim()} already exists.`);
   }
 
-  return client.models.Tutor.create({
+  const { data: tutorData, errors } = await client.models.Tutor.create({  
+    /*
+    .create returns in the form: {
+    data: Tutor,
+    errors?: Array<GraphQLError>
+    }
+    So we can destructure the data and errors from the response and return just the tutorData
+  */
     firstName: cleanFirstName,
     lastName: cleanLastName,
     email: cleanEmail,
   });
+
+  if (errors?.length) {
+    console.error("Error creating tutor:", errors);
+  }
+  if(!tutorData) {
+    alert("Error creating tutor.");
+  }
+
+  return tutorData;
+
 }
 
 export async function setFirstName(id: string, newFirstName: string | null) {
