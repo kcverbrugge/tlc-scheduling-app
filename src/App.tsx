@@ -31,34 +31,35 @@ function Admin() {
   // }, []);
 
   useEffect(() => {
-    let isCancelled = false;
-  
+    let isCancelled = false;  //flag to prevent state updates if the component unmount
     async function loadAllCourses() {
-      let nextToken: string | undefined = undefined; //string to handle pagination - when it is undefined, it means there are no more pages
-      //Can be a string or undefined, but we want to start with undefined
-      const courseList: AllCourseType[] = []; //list to hold all the courses
-  
+      let nextToken: string | undefined = undefined;  // pagination cursor - undefined means “start” or “no more pages”
+      const courseList: AllCourseType[] = [];  //accumulator for all fetched course objects
       do {
-        const { data = [], nextToken: nt } = await client.models.AllCourse.list({
-          limit: 250,        // page size (max 1000, but 250 is a safe chunk)
-          nextToken,  //If there are more items, this will not be null which indicates to go again
-        });
-        // filter out any null placeholders
-        courseList.push(...(data.filter((c): c is AllCourseType => c !== null)));
-        nextToken = nt ?? undefined;
-      } while (nextToken);  //Keep going until it becomes undefined
+        const resp = await client.models.AllCourse.list({ //Fetch the list of courses from the database
+          limit: 250,       // how many items to fetch per request
+          nextToken,        // pagination cursor from previous iteration
+        }) as {
+          data?: (AllCourseType | null)[];
+          nextToken?: string;
+        };
   
+        const page = resp.data?.filter((c): c is AllCourseType => c !== null) ?? [];        // filter out any null placeholders, defaulting to an empty array
+        courseList.push(...page); // add this page’s courses into our growing list
+        nextToken = resp.nextToken; // set up the cursor for the next loop; undefined will break the loop
+      } while (nextToken); // keep going until resp.nextToken is undefined
       if (!isCancelled) {
-        setAllCourses(courseList);
+        setAllCourses(courseList);  
+        // only update state if the component is still mounted
       }
     }
-  
-    loadAllCourses().catch(console.error);
-  
+
+    loadAllCourses().catch(console.error); // kick off the loader and log any errors
     return () => {
-      isCancelled = true;
+      isCancelled = true;  // cleanup - prevent setAllCourses after unmount
+
     };
-  }, []);
+  }, []);  
 
   useEffect(() => {
     client.models.Tutor.observeQuery().subscribe({
