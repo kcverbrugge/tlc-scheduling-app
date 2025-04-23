@@ -34,21 +34,22 @@ function Admin() {
     let isCancelled = false;
   
     async function loadAllCourses() {
-      let nextToken: string | undefined = undefined;
-      const accumulator: AllCourseType[] = [];
+      let nextToken: string | undefined = undefined; //string to handle pagination - when it is undefined, it means there are no more pages
+      //Can be a string or undefined, but we want to start with undefined
+      const courseList: AllCourseType[] = []; //list to hold all the courses
   
       do {
         const { data = [], nextToken: nt } = await client.models.AllCourse.list({
           limit: 250,        // page size (max 1000, but 250 is a safe chunk)
-          nextToken,
+          nextToken,  //If there are more items, this will not be null which indicates to go again
         });
         // filter out any null placeholders
-        accumulator.push(...(data.filter((c): c is AllCourseType => c !== null)));
+        courseList.push(...(data.filter((c): c is AllCourseType => c !== null)));
         nextToken = nt ?? undefined;
-      } while (nextToken);
+      } while (nextToken);  //Keep going until it becomes undefined
   
       if (!isCancelled) {
-        setAllCourses(accumulator);
+        setAllCourses(courseList);
       }
     }
   
@@ -68,24 +69,24 @@ function Admin() {
         setTutors(validTutors);
       },
     });
-  }, []);
+  }, []);//tells react to run this effect only once when the component mounts
 
   useEffect(() => {
-    const term = courseSearch.trim().toLowerCase();
-    if (!term) {
+    const term = courseSearch.trim().toLowerCase(); //process the user input and store it in term
+    if (!term) {  //If the user input is empty, clear the suggestions
       setSuggestions([]);
       return;
     }
   
     // filter local array
-    const matches = allCourses.filter(c => 
+    const matches = allCourses.filter(c => //Make a new list of courses that match the search term
       c.departmentCode.toLowerCase().includes(term)
       || c.courseNumber.toLowerCase().includes(term)
       || c.courseName.toLowerCase().includes(term)
     );
   
-    setSuggestions(matches);
-  }, [courseSearch, allCourses]);
+    setSuggestions(matches);  //Set the suggestions to the filtered list
+  }, [courseSearch, allCourses]); //tells react to run this effect whenever courseSearch or allCourses changes
 
   async function makeTutor() {
     setShowForm(true);
@@ -131,7 +132,6 @@ function Admin() {
       alert("Failed to create tutor");
     }
   }
-
     
   async function deleteTutor(id: string) { //async because we need to wait for the database to finish deleting the tutor
     try {
@@ -146,7 +146,7 @@ function Admin() {
 
   return (
     <main>
-      {showForm ? (
+      {showForm ? ( //If showForm is true, show the form to create a new tutor
         // ONLY show the form when showForm is true
         <form onSubmit={submitTutor}>
         <input name="firstName" placeholder="First Name" />
@@ -160,30 +160,30 @@ function Admin() {
             value={courseSearch}
             onChange={e => setCourseSearch(e.target.value)}
           />
-          {suggestions.length > 0 && (
+          {suggestions.length > 0 && (  //If there are any suggestions, show them
             <ul style={{ border: "1px solid #ccc", maxHeight: 200, overflowY: "auto" }}>
-              {suggestions.map(c => (
+              {suggestions.map(c => ( //For each suggestion, show the course name and number
                 <li key={c.id} onClick={() => {
-                  setSelectedCourses(prev => [...prev, c]);
+                  setSelectedCourses(prev => [...prev, c]); //add the course to the selected list
                   setCourseSearch("");
                   setSuggestions([]);
                 }}>
-                  {c.departmentCode} {c.courseNumber} — {c.courseName}
+                  {c.departmentCode} {c.courseNumber} — {c.courseName} 
                 </li>
               ))}
             </ul>
           )}
         
         {/* SELECTED COURSES */}
-        {selectedCourses.length > 0 && (
+        {selectedCourses.length > 0 && (  //If there are any selected courses, show them
           <div>
             <strong>Selected courses:</strong>
             <ul>
-              {selectedCourses.map(c => (
+              {selectedCourses.map(c => ( //For each selected course, show the course name and number
                 <li key={c.id}>
                   {c.departmentCode} {c.courseNumber} — {c.courseName}
                   <button type="button" onClick={() =>
-                    setSelectedCourses(prev => prev.filter(x => x.id !== c.id))
+                    setSelectedCourses(prev => prev.filter(x => x.id !== c.id)) //remove the course from the selected list
                   }>Remove</button>
                 </li>
               ))}
