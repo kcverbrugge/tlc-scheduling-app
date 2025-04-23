@@ -64,10 +64,12 @@ export async function setFirstName(id: string, newFirstName: string | null) {
     throw new Error("Input cannot be empty.");
   }
 
-  return client.models.Tutor.update({
+  const result = await client.models.Tutor.update({
     id: id,
     firstName: normalizeName(newFirstName)
   });
+
+  return result;
 }
 
 export async function setLastName(id: string, newLastName: string | null) {
@@ -76,10 +78,12 @@ export async function setLastName(id: string, newLastName: string | null) {
     throw new Error("Input cannot be empty.");
   }
 
-  return client.models.Tutor.update({
+  const result = await client.models.Tutor.update({
     id: id,
     lastName: normalizeName(newLastName)
   });
+
+  return result;
 }
 
 export async function setEmail(id: string, newEmail: string | null) {
@@ -104,10 +108,12 @@ export async function setEmail(id: string, newEmail: string | null) {
     throw new Error(`Email ${newEmail.trim()} already exists.`); //perhaps display more information on the student already found inthe DB
   }
 
-  return client.models.Tutor.update({
+  const result = await client.models.Tutor.update({
     id: id,
     email: cleanEmail
   });
+
+  return result;
 }
 
 export async function setStatus(id: string, newStatus: string) {
@@ -117,10 +123,12 @@ export async function setStatus(id: string, newStatus: string) {
     throw new Error(`Invalid input ${newStatus}. Tutor status can only be one of the following: ${STATUSES.join(", ")}`);
   }
 
-  return client.models.Tutor.update({
+  const result = await client.models.Tutor.update({
     id: id,
     status: cleanStatus
   });
+
+  return result;
 }
 
 export async function setContactHours(id: string, newContactHours: number) {
@@ -129,14 +137,18 @@ export async function setContactHours(id: string, newContactHours: number) {
     throw new Error('Contact hours cannot be negative.')
   }
 
-  return client.models.Tutor.update({
+  const result = await client.models.Tutor.update({
     id: id,
     contactHours: newContactHours
   });
+
+  return result;
 }
 
 export async function deleteTutor(id: string) {
-  return client.models.Tutor.delete({ id }, { authMode: "userPool" });
+  const result = await client.models.Tutor.delete({ id }, { authMode: "userPool" });
+
+  return result;
 }
 
 export function observeTutors(callback: (tutors: Schema["Tutor"]["type"][]) => void) {
