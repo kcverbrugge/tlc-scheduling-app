@@ -21,7 +21,7 @@ const schema = a
     // ALLCOURSE MODEL (catalog of courses like CSCI 101)
     AllCourse: a.model({
       departmentCode: a.string().required(), // "CSCI"
-      courseNumber: a.integer().required(),      // 101
+      courseNumber: a.string().required(),      // 101
       courseName: a.string().required(),     // "Intro to Programming"
       availableCourses: a.hasMany('AvailableCourse', 'courseId'), // link to tutors who can teach this
     }),

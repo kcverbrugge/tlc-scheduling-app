@@ -1,8 +1,15 @@
+// Tutor service functions for managing tutor data. This is designed to be integrated with
+// front end functionality so that users know if they're inputting invalid data, dauplicate
+// data, etc. Make sure these are called instead of directly using the client.
+
+//STATUS WIP, need to add functionality for adding/updating schedules, adding appointments, callouts, etc...
+// That will come when those service fucntions are created
+
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
 import { STATUSES } from "../../amplify/enums/statusEnum";
-import { isValidStatus, isEmailFormat } from "../utils/validators"
-import { normalizeName, normalizeEmail, normalizeStatus } from "../utils/normalizers"
+import { isValidStatus, isEmailFormat } from "../utils/validators";
+import { normalizeName, normalizeEmail, normalizeStatus } from "../utils/normalizers";
 
 
 
