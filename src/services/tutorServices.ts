@@ -50,7 +50,7 @@ export async function createTutor(firstName: string | null, lastName: string | n
 
 export async function setFirstName(id: string, newFirstName: string | null) {
   if (!newFirstName || !normalizeName(newFirstName)) {
-    throw new Error("Input cannot be empty.");
+    throw new Error("First name cannot be empty.");
   }
 
   const result = await client.models.Tutor.update({
@@ -63,7 +63,7 @@ export async function setFirstName(id: string, newFirstName: string | null) {
 
 export async function setLastName(id: string, newLastName: string | null) {
   if (!newLastName || !normalizeName(newLastName)) {
-    throw new Error("Input cannot be empty.");
+    throw new Error("Last name cannot be empty.");
   }
 
   const result = await client.models.Tutor.update({
@@ -76,7 +76,7 @@ export async function setLastName(id: string, newLastName: string | null) {
 
 export async function setEmail(id: string, newEmail: string | null) {
   if (!newEmail || !normalizeEmail(newEmail)) {
-    throw new Error("Input cannot be empty.");
+    throw new Error("Email cannot be empty.");
   } 
 
   const cleanEmail = normalizeEmail(newEmail);

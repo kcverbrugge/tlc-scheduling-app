@@ -19,7 +19,7 @@ const schema = a
     }), // Use email as a unique identifier for Tutors
 
     // ALLCOURSE MODEL (catalog of courses like CSCI 101)
-    AllCourse: a.model({
+    Course: a.model({
       departmentCode: a.string().required(), // "CSCI"
       courseNumber: a.string().required(),      // 101
       courseName: a.string().required(),     // "Intro to Programming"
@@ -61,6 +61,7 @@ const schema = a
       tutor: a.belongsTo('Tutor', 'tutorId'),
       startTime: a.datetime().required(),            // When the session starts
       endTime: a.datetime().required(),              // When it ends
+      recurrenceEnd: a.datetime(),                   // Optional end date for recurring sessions
       roomId: a.id(),                                // Optional room
       room: a.belongsTo('Room', 'roomId'),
     }),
