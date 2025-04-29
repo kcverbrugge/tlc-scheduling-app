@@ -1,8 +1,15 @@
+// Tutor service functions for managing tutor data. This is designed to be integrated with
+// front end functionality so that users know if they're inputting invalid data, dauplicate
+// data, etc. Make sure these are called instead of directly using the client.
+
+//STATUS WIP, need to add functionality for adding/updating schedules, adding appointments, callouts, etc...
+// That will come when those service fucntions are created
+
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
 import { STATUSES } from "../../amplify/enums/statusEnum";
-import { isValidStatus, isEmailFormat } from "../utils/validators"
-import { normalizeName, normalizeEmail, normalizeStatus } from "../utils/normalizers"
+import { isValidStatus, isEmailFormat } from "../utils/validators";
+import { normalizeName, normalizeEmail, normalizeStatus } from "../utils/normalizers";
 
 
 
@@ -61,7 +68,7 @@ export async function createTutor(firstName: string | null, lastName: string | n
 export async function setFirstName(id: string, newFirstName: string | null) {
   if (!newFirstName || !normalizeName(newFirstName)) {
     alert("Input cannot be empty.");
-    throw new Error("Input cannot be empty.");
+    throw new Error("First name cannot be empty.");
   }
 
   const result = await client.models.Tutor.update({
@@ -75,7 +82,7 @@ export async function setFirstName(id: string, newFirstName: string | null) {
 export async function setLastName(id: string, newLastName: string | null) {
   if (!newLastName || !normalizeName(newLastName)) {
     alert("Input cannot be empty.");
-    throw new Error("Input cannot be empty.");
+    throw new Error("Last name cannot be empty.");
   }
 
   const result = await client.models.Tutor.update({
@@ -89,7 +96,7 @@ export async function setLastName(id: string, newLastName: string | null) {
 export async function setEmail(id: string, newEmail: string | null) {
   if (!newEmail || !normalizeEmail(newEmail)) {
     alert("Input cannot be empty.");
-    throw new Error("Input cannot be empty.");
+    throw new Error("Email cannot be empty.");
   } 
 
   const cleanEmail = normalizeEmail(newEmail);

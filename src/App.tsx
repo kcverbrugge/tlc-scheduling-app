@@ -7,7 +7,7 @@ import { Authenticator } from "@aws-amplify/ui-react";
 import { createTutor } from "./services/tutorServices";
 
 
-type AllCourseType = Schema["AllCourse"]["type"];
+type AllCourseType = Schema["Course"]["type"];
 const client = generateClient<Schema>();
 
 function Admin() {
@@ -18,8 +18,8 @@ function Admin() {
   const [showForm, setShowForm] = useState(false);
 
   const [courseSearch, setCourseSearch] = useState("");// Hold/track what the user types
-  const [suggestions, setSuggestions] = useState<Array<Schema["AllCourse"]["type"]>>([]);//hold/track the live search results
-  const [selectedCourses, setSelectedCourses] = useState<Array<Schema["AllCourse"]["type"]>>([]);//keep track of which courses the user has selected
+  const [suggestions, setSuggestions] = useState<Array<Schema["Course"]["type"]>>([]);//hold/track the live search results
+  const [selectedCourses, setSelectedCourses] = useState<Array<Schema["Course"]["type"]>>([]);//keep track of which courses the user has selected
   const [allCourses, setAllCourses] = useState<AllCourseType[]>([]);
 
   // useEffect(() => {
@@ -36,7 +36,7 @@ function Admin() {
       let nextToken: string | undefined = undefined;  // pagination cursor - undefined means “start” or “no more pages”
       const courseList: AllCourseType[] = [];  //accumulator for all fetched course objects
       do {
-        const resp = await client.models.AllCourse.list({ //Fetch the list of courses from the database
+        const resp = await client.models.Course.list({ //Fetch the list of courses from the database
           limit: 250,       // how many items to fetch per request
           nextToken,        // pagination cursor from previous iteration
         }) as {

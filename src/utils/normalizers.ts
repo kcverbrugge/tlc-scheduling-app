@@ -13,5 +13,20 @@ export function normalizeStatus(status: string): string {
   return status.trim().toUpperCase();
 }
 
+export function normalizeDepartmentCode(departmentCode: string): string {
+  return departmentCode.trim().toUpperCase();
+}
+
+export function normalizeCourseNumber(courseNumber: string): string {
+  //might make this a number instead of string
+  return courseNumber.trim();
+}
+
+export function normalizeCourseName(courseName: string): string {
+  return courseName.trim();
+}
+
+
+
 
 
