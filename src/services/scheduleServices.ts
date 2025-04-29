@@ -1,5 +1,7 @@
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
+import { normalizeDateTime } from "../utils/normalizers";
+import { isDateTime } from "../utils/validators";
 
 
 
@@ -8,13 +10,13 @@ const client = generateClient<Schema>();
 // Add DST considerations, recurring capability (with ending date)
 export async function createSchedule(tutorId: string, startTime: string | Date | null, endTime: string | Date | null, recurrenceEnd: string | Date | null, roomId?: string | null) {
   if ((!tutorId || !startTime || !endTime) || (!tutorId.trim() || !startTime.toString().trim() || !endTime.toString().trim())) {
-    throw new Error("Tutor ID, start time, end time, and recurrence end date required. are required.");
+    throw new Error("Tutor ID, start time, end time are required.");
   }
 
-  const start = typeof startTime === "string" ? new Date(startTime.trim()) : startTime;
-  const end = typeof endTime === "string" ? new Date(endTime.trim()) : endTime;
+  const start = normalizeDateTime(startTime);
+  const end = normalizeDateTime(endTime);
 
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+  if (!isDateTime(start) || !isDateTime(end)) {
     throw new Error("Start time or end time is not a valid datetime.");
   }
 
@@ -22,15 +24,30 @@ export async function createSchedule(tutorId: string, startTime: string | Date |
     throw new Error("End time must be after start time.");
   }
 
+  const existingSchedule = await client.models.Schedule.list({
+    filter: {
+      tutorId: { eq: tutorId },
+      startTime: { le: end.toISOString() },
+      endTime: { ge: start.toISOString() },
+    },
+  });
+
+  if (existingSchedule.data.length > 0) {
+    throw new Error("A schedule already exists for this tutor during the specified time.");
+  }
+
+
   //if recurrenceEnd is populated, create schedules until that specified date
   if (recurrenceEnd) {
     //clean up the variable and ensure that it is type DateTime
-    const cleanRecurrenceEnd = typeof startTime === "string" ? new Date(startTime.trim()) : startTime;
+    const cleanRecurrenceEnd = normalizeDateTime(recurrenceEnd);
     
     //ensure that it is an actual DateTime type
-    if (isNaN(cleanRecurrenceEnd.getTime())) {
+    if (!isDateTime(cleanRecurrenceEnd)) {
       throw new Error("Recurrence end time is not a valid datetime.");
     }
+    //collects the errors so recurringSchedules can continue to populate
+    const errors: string[] = [];
 
     while (start < cleanRecurrenceEnd) {
       const existingRecurrence = await client.models.Schedule.list({
@@ -41,8 +58,13 @@ export async function createSchedule(tutorId: string, startTime: string | Date |
         },
       });
   
+      // I don't like how this can exit before all the dates before the recurrence end are scheduled
       if (existingRecurrence.data.length > 0) {
-        throw new Error("A schedule already exists for this tutor during the specified time.");
+        const overlappingSchedule = new Date(existingRecurrence.data[0].startTime);
+
+        errors.push(`A schedule already exists for this tutor on ${overlappingSchedule.getMonth()+1}/${overlappingSchedule.getDate()}/${overlappingSchedule.getFullYear()} at ${overlappingSchedule.toLocaleTimeString()}.`);
+
+        continue;
       }
 
       await client.models.Schedule.create({
@@ -56,7 +78,10 @@ export async function createSchedule(tutorId: string, startTime: string | Date |
       start.setDate(start.getDate() + 7); // Move to next week
       end.setDate(end.getDate() + 7); // Move to next week
     }
-    //don't know what to return here.
+    if (errors.length > 0) {
+      //throws all the strings and errors
+      throw new Error(`Some schedules failed:\n${errors.join("\n")}`);
+    }
   } else {
     const result = await client.models.Schedule.create({
       tutorId: tutorId,

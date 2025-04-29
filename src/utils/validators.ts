@@ -22,3 +22,13 @@ export function isCourseNumber(courseNumber: string) {
   const courseNumberPattern = /^[0-9]{3}$/;
   return courseNumberPattern.test(courseNumber);
 }
+
+export function isDateTime(inputDate: string | Date | null) {
+  if (!inputDate) {
+    return false;
+  }
+
+  const checkDate = typeof inputDate === "string" ? new Date(inputDate?.trim()) : inputDate;
+
+  return !isNaN(checkDate.getDate());
+}
