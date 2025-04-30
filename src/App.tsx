@@ -1,99 +1,18 @@
-
 import { useEffect, useState } from "react";
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
 import { fetchAuthSession } from "aws-amplify/auth";
 import { Authenticator } from "@aws-amplify/ui-react";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from "./admin.tsx";
+import FrontHome from "./frontDesk.tsx";
+import Add from "./add.tsx";
+import Edit from "./edit.tsx";
+import Info from "./info.tsx";
 
-const client = generateClient<Schema>();
-
-function Admin() {
-  const { signOut } = useAuthenticator();
-
-  //State to hold the list of all tutors retrieved from the database
-  const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
-
-  useEffect(() => {
-    client.models.Tutor.observeQuery().subscribe({
-      next: (data) => setTutors([...data.items]),
-    });
-  }, []);
-
-  function createTutor() {
-    const firstName = window.prompt("First Name");
-    const lastName = window.prompt("Last Name");
-    const email = window.prompt("Email");
-  
-    if (firstName && lastName && email) {
-      client.models.Tutor.create({ firstName, lastName, email });
-    } else {
-      alert("Are you fucking stupid you dumb bitch?");
-    }
-  }
-
-    
-  function deleteTutor(id: string) {
-    client.models.Tutor.delete({ id }, { authMode: "userPool" });
-  }
-
-    return (
-      <main>
-        {/* <h1>{user?.signInDetails?.loginId}'s Todos </h1> */}
-        <center><h1>Tutors</h1></center>
-        <button onClick={createTutor}>+ new Tutor</button>
-        <ul>
-          {tutors.map((Tutor) => (
-            <li onClick={() => deleteTutor(Tutor.id)} key={Tutor.id}>{Tutor.firstName}, {Tutor.lastName}, {Tutor.email}</li>
-          ))}
-        </ul>
-        <div>
-          🥳 App successfully hosted. Try creating a new tutor.
-          <br />
-          <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-            Review next step of this tutorial.
-          </a>
-        </div>
-        <button onClick={signOut}>Sign out</button>
-      </main>
-    );
-}
-
-function FrontDesk() {
-  const { signOut } = useAuthenticator();
-  const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
-
-  useEffect(() => {
-    client.models.Tutor.observeQuery().subscribe({
-      next: (data) => setTutors([...data.items]),
-    });
-  }, []);
-
-  return (
-    <main>
-      {/* <h1>{user?.signInDetails?.loginId}'s Todos </h1> */}
-      <center><h1>Tutors</h1></center>
-
-      <ul>
-        {tutors.map((Tutor) => (
-          <li key={Tutor.id}>{Tutor.firstName}, {Tutor.lastName}, {Tutor.email}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new tutor.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
-      <button onClick={signOut}>Sign out</button>
-    </main>
-  );
-}
 
 function GetUser() {
   const [userGroup, setUserGroup] = useState<string | null>(null);
-  const { signOut } = useAuthenticator();
+  //const { signOut } = useAuthenticator();
 
   /*
   The issue here was caused by fetching the session outside of the useEffect hook.
@@ -128,23 +47,51 @@ function GetUser() {
   }, []);
 
   if (userGroup === "Admin") {
-    return <Admin />;
+    return (
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/add" element={<Add />} />
+          <Route path="/edit/:id" element={<Edit />} />
+          <Route path="/info/:id" element={<Info />} />
+        </Routes>
+      </Router>
+    );
   } else if (userGroup === "FrontDesk") {
-    return <FrontDesk />;
+    return (
+      <Router>
+        <Routes>
+          <Route path="/" element={<FrontHome />} />
+          <Route path="/info/:id" element={<Info />} />
+        </Routes>
+      </Router>
+    );
   } else {
+    return (
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/add" element={<Add />} />
+          <Route path="/edit/:id" element={<Edit />} />
+          <Route path="/info/:id" element={<Info />} />
+        </Routes>
+      </Router>
+    );
+    /*
     return (
       <div>
         <p>You are not part of a recognized user group.</p> 
         <button onClick={signOut}>Sign out</button>
       </div>
     );
+    */
   }
 }
 
 function App() {
   return (
     <Authenticator>
-        <main style={{ padding: "2rem" }}>
+        <main>
           {/* Render the dashboard component based on the user's group */}
           <GetUser />
           {/* Sign out button */}
