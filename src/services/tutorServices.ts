@@ -152,6 +152,18 @@ export async function setContactHours(id: string, newContactHours: number) {
   return result;
 }
 
+export async function getTutor(id: string) {
+  const tutorDataWrapper = await client.models.Tutor.get({ id });
+
+  const tutorData = tutorDataWrapper.data;
+
+  if(!tutorData) {
+    alert("Error fetching tutor.");
+  }
+
+  return tutorData;
+}
+
 export async function deleteTutor(id: string) {
   const result = await client.models.Tutor.delete({ id }, { authMode: "userPool" });
 
