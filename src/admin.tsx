@@ -10,8 +10,6 @@ const client = generateClient<Schema>();
 
 function Home() {
   const { signOut } = useAuthenticator();
-    // Since user is not being used, the build will fail even though it is just a warning.
-    // const { user, signOut } = useAuthenticator(); 
 
   const navigate = useNavigate();
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
@@ -44,10 +42,17 @@ function Home() {
       deleteTutor(Tutor.id);
     }
   }
-
+  
   useEffect(() => {
-    client.models.Tutor.observeQuery().subscribe({ next: (data) => setTutors([...data.items]), });
-  }, []);
+    client.models.Tutor.observeQuery().subscribe({
+      next: (data) => {
+        const validTutors = data.items.filter(
+          (tutor) => tutor?.firstName && tutor?.lastName && tutor?.email
+        );
+        setTutors(validTutors);
+      },
+    });
+  }, []);//tells react to run this effect only once when the component mounts
 
   useEffect(() => {
     if (menuState.open) {//Ellipsis Menu

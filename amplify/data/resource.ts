@@ -1,40 +1,6 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { STATUSES } from "../enums/statusEnum"; // ← reuse the array!
 
-/*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any user authenticated via an API key can "create", "read",
-"update", and "delete" any "Todo" records.
-=========================================================================*/
-// const schema = a
-//   .schema({
-//     Tutor: a.model({
-//         // tutorId: a.id().required(),
-//         // fields can be of various scalar types,
-//         // such as string, boolean, float, integers etc.
-//         firstName: a.string(),
-//         lastName: a.string(),
-//         email: a.string(),
-//         classes: a.string().array(),
-//         // fields can be of custom types
-      
-//         // collectionId: a.id(),
-//         // collection: a.belongsTo("Collection", "collectionId")
-//         // Use custom identifiers. By default, it uses an `id: a.id()` field
-//       }),
-//       // .identifier(["name"]),
-//     // Collection: a
-//     //   .model({
-//     //     customers: a.hasMany("Customer", "collectionId"), // setup relationships between types
-//     //     tags: a.string().array(), // fields can be arrays
-//     //     representativeId: a.id().required(),
-//     //     // customize secondary indexes to optimize your query performance
-//     //   })
-//       // .secondaryIndexes((index) => [index("representativeId")]),
-  // })
-//   .authorization((allow) => [allow.publicApiKey()]);
-
 const schema = a
   .schema({  // Begin schema definition
     // TUTOR MODEL
@@ -53,9 +19,9 @@ const schema = a
     }), // Use email as a unique identifier for Tutors
 
     // ALLCOURSE MODEL (catalog of courses like CSCI 101)
-    AllCourse: a.model({
+    Course: a.model({
       departmentCode: a.string().required(), // "CSCI"
-      courseNumber: a.integer().required(),      // 101
+      courseNumber: a.string().required(),      // 101
       courseName: a.string().required(),     // "Intro to Programming"
       availableCourses: a.hasMany('AvailableCourse', 'courseId'), // link to tutors who can teach this
     }),
@@ -64,7 +30,7 @@ const schema = a
       tutorId: a.id().required(),  // Which tutor is available
       courseId: a.id().required(), // For which course
       tutor: a.belongsTo('Tutor', 'tutorId'),    // Link to Tutor table
-      course: a.belongsTo('AllCourse', 'courseId'), // Link to Course table
+      course: a.belongsTo('Course', 'courseId'), // Link to Course table
     }), // Unique combo
 
     // CAMPUS MODEL (like Main Campus, Montrose)
@@ -95,6 +61,7 @@ const schema = a
       tutor: a.belongsTo('Tutor', 'tutorId'),
       startTime: a.datetime().required(),            // When the session starts
       endTime: a.datetime().required(),              // When it ends
+      recurrenceEnd: a.datetime(),                   // Optional end date for recurring sessions
       roomId: a.id(),                                // Optional room
       room: a.belongsTo('Room', 'roomId'),
     }),
@@ -113,7 +80,8 @@ const schema = a
         scheduledStartTime: a.datetime().required(),
         actualStartTime: a.datetime(),
         endTime: a.datetime(),
-        reccuring: a.boolean(), 
+        recurrenceEnd: a.datetime(),
+        description: a.string(), 
     }),
 
     // CALLOUT MODEL (tutor is out that day or partially)
