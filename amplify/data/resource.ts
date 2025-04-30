@@ -80,7 +80,8 @@ const schema = a
         scheduledStartTime: a.datetime().required(),
         actualStartTime: a.datetime(),
         endTime: a.datetime(),
-        reccuring: a.boolean(), 
+        recurrenceEnd: a.datetime(),
+        description: a.string(), 
     }),
 
     // CALLOUT MODEL (tutor is out that day or partially)
