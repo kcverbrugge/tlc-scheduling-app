@@ -28,7 +28,6 @@ export async function createTutor(firstName: string | null, lastName: string | n
 
   //is there ever a case where a students email is entered as a non CMU email?
   if (!isEmailFormat(cleanEmail)) { //checks email format
-    alert("Email format is invalid.");
     throw new Error("Email format is invalid.");
   }
 
@@ -37,7 +36,6 @@ export async function createTutor(firstName: string | null, lastName: string | n
   });
 
   if (existing.data.length > 0) {
-    alert(`Email ${email.trim()} already exists.`);
     throw new Error(`Email ${email.trim()} already exists.`);
   }
 
@@ -58,7 +56,7 @@ export async function createTutor(firstName: string | null, lastName: string | n
     console.error("Error creating tutor:", errors);
   }
   if(!tutorData) {
-    alert("Error creating tutor.");
+    throw new Error("Error creating tutor.");
   }
 
   return tutorData;
@@ -67,7 +65,6 @@ export async function createTutor(firstName: string | null, lastName: string | n
 
 export async function setFirstName(id: string, newFirstName: string | null) {
   if (!newFirstName || !normalizeName(newFirstName)) {
-    alert("Input cannot be empty.");
     throw new Error("First name cannot be empty.");
   }
 
@@ -81,7 +78,6 @@ export async function setFirstName(id: string, newFirstName: string | null) {
 
 export async function setLastName(id: string, newLastName: string | null) {
   if (!newLastName || !normalizeName(newLastName)) {
-    alert("Input cannot be empty.");
     throw new Error("Last name cannot be empty.");
   }
 
@@ -95,14 +91,12 @@ export async function setLastName(id: string, newLastName: string | null) {
 
 export async function setEmail(id: string, newEmail: string | null) {
   if (!newEmail || !normalizeEmail(newEmail)) {
-    alert("Input cannot be empty.");
     throw new Error("Email cannot be empty.");
   } 
 
   const cleanEmail = normalizeEmail(newEmail);
 
   if (!isEmailFormat(cleanEmail)) {
-    alert("Email format is invalid.");
     throw new Error("Email format is invalid.");
   }
 
@@ -111,7 +105,6 @@ export async function setEmail(id: string, newEmail: string | null) {
   });
 
   if (existing.data.some(tutor => tutor.id !== id)) {
-    alert(`Email ${newEmail.trim()} already exists.`); //perhaps display more information on the student already found in the DB
     throw new Error(`Email ${newEmail.trim()} already exists.`); //perhaps display more information on the student already found inthe DB
   }
 
@@ -126,7 +119,6 @@ export async function setEmail(id: string, newEmail: string | null) {
 export async function setStatus(id: string, newStatus: string) {
   const cleanStatus = normalizeStatus(newStatus);
   if (!isValidStatus(cleanStatus)) {
-    alert(`Invalid input ${newStatus}. Tutor status can only be one of the following: ${STATUSES.join(", ")}`);
     throw new Error(`Invalid input ${newStatus}. Tutor status can only be one of the following: ${STATUSES.join(", ")}`);
   }
 
@@ -140,7 +132,6 @@ export async function setStatus(id: string, newStatus: string) {
 
 export async function setContactHours(id: string, newContactHours: number) {
   if (newContactHours < 0) {
-    alert("Contact hours cannot be negative.");
     throw new Error('Contact hours cannot be negative.')
   }
 
@@ -152,13 +143,50 @@ export async function setContactHours(id: string, newContactHours: number) {
   return result;
 }
 
+export async function updateTutor(id: string, newFirstName: string | null, newLastName: string | null, newEmail: string | null) {
+  if (!newFirstName || !normalizeName(newFirstName)) {
+    throw new Error("First name cannot be empty.");
+  }
+
+  if (!newLastName || !normalizeName(newLastName)) {
+    throw new Error("Last name cannot be empty.");
+  }
+
+  if (!newEmail || !normalizeEmail(newEmail)) {
+    throw new Error("Email cannot be empty.");
+  } 
+
+  const cleanEmail = normalizeEmail(newEmail);
+
+  if (!isEmailFormat(cleanEmail)) {
+    throw new Error("Email format is invalid.");
+  }
+
+  const existing = await client.models.Tutor.list({
+    filter: { email: { eq: cleanEmail } },
+  });
+
+  if (existing.data.some(tutor => tutor.id !== id)) {
+    throw new Error(`Email ${newEmail.trim()} already exists.`); //perhaps display more information on the student already found inthe DB
+  }
+
+  const result = await client.models.Tutor.update({
+    id: id,
+    firstName: normalizeName(newFirstName),
+    lastName: normalizeName(newLastName),
+    email: cleanEmail,
+  });
+
+  return result;
+}
+
 export async function getTutor(id: string) {
   const tutorDataWrapper = await client.models.Tutor.get({ id });
 
   const tutorData = tutorDataWrapper.data;
 
   if(!tutorData) {
-    alert("Error fetching tutor.");
+    throw new Error("Error fetching tutor.");
   }
 
   return tutorData;
