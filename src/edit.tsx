@@ -35,17 +35,17 @@ function Add() {
     useEffect(() => {
       const matchedTutor = tutors.find(t => t.id === id);
       if (matchedTutor) {
-        setFirst(matchedTutor.firstName);
-        setLast(matchedTutor.lastName);
-        setEmail(matchedTutor.email);
+        setFirst(matchedTutor.firstName ?? "No Tutor Found");
+        setLast(matchedTutor.lastName ?? "No Tutor Found");
+        setEmail(matchedTutor.email ?? "No Tutor Found");
       }
     }, [tutors, id]);
 
 
     function validateForm() {
-      const inputs = document.querySelectorAll('#myForm input[type="text"]');
+      const inputs = document.querySelectorAll<HTMLInputElement>('#myForm input[type="text"]');
       let allFilled = true;
-      const values = {};
+      const values: { [key: string]: string } = {};
 
       inputs.forEach(input => {
         const value = input.value.trim();
@@ -59,11 +59,12 @@ function Add() {
       });
 
       if (allFilled) {
-        updateTutor(id, values.firstName, values.lastName, values.email);
+        updateTutor(String(id), values.firstName, values.lastName, values.email);
         inputs.forEach(input => {
           input.value = '';
+          input.classList.remove('invalid');
         });
-        input.classList.remove('invalid');
+        
       }
     }
 

@@ -13,8 +13,18 @@ function Home() {
 
   const navigate = useNavigate();
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
-  const [menuState, setMenuState] = useState({ open: false, x: 0, y: 0, tutor: null });//Ellipsis Menu
-  const menuRef = useRef(null);//Ellipsis Menu
+  const [menuState, setMenuState] = useState<{
+    open: boolean;
+    x: number;
+    y: number;
+    tutor: Schema["Tutor"]["type"] | null;
+  }>({
+    open: false,
+    x: 0,
+    y: 0,
+    tutor: null,
+  });
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   
@@ -103,8 +113,8 @@ function Home() {
                 <button
                 onClick={() => navigate(`/info/${Tutor.id}`)}
                 style={{ border: 'none', background: 'transparent' }}
-                onMouseEnter={(e) => e.target.style.color = '#007BFF'}
-                onMouseLeave={(e) => e.target.style.color = '#000'}>
+                onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {e.currentTarget.style.color = '#007BFF'}}
+                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {e.currentTarget.style.color = '#000'}}>
                 <span>{Tutor.firstName}, {Tutor.lastName}, {Tutor.email}</span>
                 </button>
                 {/* End Name as button */}
@@ -113,13 +123,13 @@ function Home() {
                   onClick={(e) => handleEllipsisClick(e, Tutor)} 
                   style={{fontSize: '32px', lineHeight: '1', padding: '0 8px', border: 'none', background: 'transparent',
                           cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#555'}}
-                  onMouseEnter={(e) => e.target.style.color = '#007BFF'}
-                  onMouseLeave={(e) => e.target.style.color = '#555'}>
+                  onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {e.currentTarget.style.color = '#007BFF'}}
+                  onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {e.currentTarget.style.color = '#555'}}>
                 &#8230;
                 </button>
                 {/* End Ellipsis */}
                 {/* Ellipsis Menu */}
-                {menuState.open && (
+                {menuState.open && menuState.tutor && (
                   <div
                     ref={menuRef}
                     style={{
@@ -136,10 +146,10 @@ function Home() {
                     <button style={{ display: 'flex', width: '100%' }}>
                       Callout
                     </button>
-                    <button onClick={() => navigate(`/edit/${menuState.tutor.id}`)} style={{ display: 'flex', width: '100%' }}>
+                    <button onClick={() => navigate(`/edit/${menuState.tutor!.id}`)} style={{ display: 'flex', width: '100%' }}>
                       Edit Tutor
                     </button>
-                    <button onClick={() => deleteConfirmation(menuState.tutor)} style={{ display: 'flex', width: '100%' }}>
+                    <button onClick={() => deleteConfirmation(menuState.tutor!)} style={{ display: 'flex', width: '100%' }}>
                       Delete Tutor
                     </button>
                   </div>

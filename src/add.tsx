@@ -18,9 +18,9 @@ function Add() {
     const [allCourses, setAllCourses] = useState<AllCourseType[]>([]);
 
     function validateForm() {
-      const inputs = document.querySelectorAll('#myForm input[type="text"]');
+      const inputs = document.querySelectorAll<HTMLInputElement>('#myForm input[type="text"]');
       let allFilled = true;
-      const values = {};
+      const values: { [key: string]: string } = {};
 
       inputs.forEach(input => {
         const value = input.value.trim();
@@ -37,8 +37,8 @@ function Add() {
         createTutor(values.firstName, values.lastName, values.email);
         inputs.forEach(input => {
           input.value = '';
+          input.classList.remove('invalid');
         });
-        input.classList.remove('invalid');
       }
     }
 

@@ -3,7 +3,6 @@ import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useNavigate } from 'react-router-dom';
-import { deleteTutor } from "./services/tutorServices.ts";
 
 
 const client = generateClient<Schema>();
@@ -14,7 +13,7 @@ function FrontHome() {
   const navigate = useNavigate();
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
   const [menuState, setMenuState] = useState({ open: false, x: 0, y: 0, tutor: null });//Ellipsis Menu
-  const menuRef = useRef(null);//Ellipsis Menu
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   
@@ -35,14 +34,6 @@ function FrontHome() {
     }
   };
   //End of Ellipsis Menu functions
-
-  //Delete functions
-  function deleteConfirmation(Tutor: any) {
-    var result = confirm(`Are you sure you want to delete ${Tutor.firstName} ${Tutor.lastName}?`);
-    if (result){
-      deleteTutor(Tutor.id);
-    }
-  }
   
   useEffect(() => {
     client.models.Tutor.observeQuery().subscribe({
@@ -102,8 +93,8 @@ function FrontHome() {
                 <button
                 onClick={() => navigate(`/info/${Tutor.id}`)}
                 style={{ border: 'none', background: 'transparent' }}
-                onMouseEnter={(e) => e.target.style.color = '#007BFF'}
-                onMouseLeave={(e) => e.target.style.color = '#000'}>
+                onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {e.currentTarget.style.color = '#007BFF'}}
+                onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {e.currentTarget.style.color = '#555'}}>
                 <span>{Tutor.firstName}, {Tutor.lastName}, {Tutor.email}</span>
                 </button>
                 {/* End Name as button */}
@@ -112,8 +103,8 @@ function FrontHome() {
                   onClick={(e) => handleEllipsisClick(e, Tutor)} 
                   style={{fontSize: '32px', lineHeight: '1', padding: '0 8px', border: 'none', background: 'transparent',
                           cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#555'}}
-                  onMouseEnter={(e) => e.target.style.color = '#007BFF'}
-                  onMouseLeave={(e) => e.target.style.color = '#555'}>
+                  onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {e.currentTarget.style.color = '#007BFF'}}
+                  onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {e.currentTarget.style.color = '#555'}}>
                 &#8230;
                 </button>
                 {/* End Ellipsis */}
