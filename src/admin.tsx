@@ -15,6 +15,7 @@ function Home() {
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
   const [menuState, setMenuState] = useState({ open: false, x: 0, y: 0, tutor: null });//Ellipsis Menu
   const menuRef = useRef(null);//Ellipsis Menu
+  const [searchQuery, setSearchQuery] = useState("");
 
   
   //Ellipsis Menu functions
@@ -65,6 +66,16 @@ function Home() {
     };
   }, [menuState.open]);//Ellipsis Menu
 
+  //Search filter
+  const filteredTutors = tutors.filter((tutor) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      tutor.firstName?.toLowerCase().includes(query) ||
+      tutor.lastName?.toLowerCase().includes(query) ||
+      tutor.email?.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <main>
       <head>
@@ -79,13 +90,14 @@ function Home() {
           <center><h1>Tutors</h1></center>
           {/* Search bar */}
           <div className="search-bar-container">
-            <input type="text" placeholder="Search..." className="search-input"></input>
-            <button className="search-button">Search</button>
+            <input type="text" placeholder="Search..." className="search-input" 
+              value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}></input>
+            <button className="search-button" onClick={() => setSearchQuery("")}>Clear</button>
             <button className="search-button" onClick={() => navigate('/add')}>Add Tutor</button>
           </div>
           {/* Search bar */}
           <ul>
-            {tutors.map((Tutor) => (
+            {filteredTutors.map((Tutor) => (
               <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 {/* Name as button */}
                 <button
@@ -118,7 +130,7 @@ function Home() {
                       border: 'none',
                       zIndex: 1000,
                     }}>
-                    <button onClick={() => navigate(`/edit/${Tutor.id}`)} style={{ display: 'flex', width: '100%' }}>
+                    <button onClick={() => navigate(`/edit/${menuState.tutor.id}`)} style={{ display: 'flex', width: '100%' }}>
                       Edit Tutor
                     </button>
                     <button onClick={() => deleteConfirmation(menuState.tutor)} style={{ display: 'flex', width: '100%' }}>

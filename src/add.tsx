@@ -108,17 +108,18 @@ function Add() {
               <form id="myForm">
                 <div className="form-group">
                   <label>First Name:</label>
-                  <input type="text" id="firstName"></input>
+                  <input type="text" placeholder="First Name…" id="firstName"></input>
                 </div>
                 <div className="form-group">
                   <label>Last Name:</label>
-                  <input type="text" id="lastName"></input>
+                  <input type="text" placeholder="Last Name…" id="lastName"></input>
                 </div>
                 <div className="form-group">
                   <label>Email:</label>
-                  <input type="text" id="email"></input>
+                  <input type="text" placeholder="Email…" id="email"></input>
                 </div>
-                <div>
+                <div className="form-group">
+                  <label>Courses:</label>
                   <input type="text" placeholder="Search courses…" value={courseSearch}
                     onChange={e => setCourseSearch(e.target.value)}></input>
                 </div>

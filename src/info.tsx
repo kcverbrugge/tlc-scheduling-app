@@ -1,15 +1,41 @@
+import { useEffect, useState} from "react";
+import type { Schema } from "../amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { getTutor } from "./services/tutorServices.ts";
-    
+import { getCoursesForTutor } from "./services/availableCourseServices.ts";
 
+const client = generateClient<Schema>();
+    
 function Info() {
   const { signOut } = useAuthenticator();
   const navigate = useNavigate();
   const { id } = useParams();
 
-  let tutor = getTutor(String(id));
+  const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
+
+  useEffect(() => {
+    client.models.Tutor.observeQuery().subscribe({
+      next: (data) => {
+        const validTutors = data.items.filter((tutor) => tutor?.firstName && tutor?.lastName && tutor?.email);
+        setTutors(validTutors);
+      },
+    });
+  }, []);//tells react to run this effect only once when the component mounts
+
+  let tutor: { [key: string]: any } = {};
+  for(let i=0; i<tutors.length; i++){
+    if(id == tutors[i].id){
+      tutor["firstName"] = tutors[i].firstName;
+      tutor["lastName"] = tutors[i].lastName;
+      tutor["email"] = tutors[i].email;
+      tutor["id"] = tutors[i].id;
+      break;
+    }
+  }
+
+  let courseList = getCoursesForTutor(String(id));
 
   return(
     <main>
@@ -27,15 +53,19 @@ function Info() {
           <div className="info-box">
             <div className="info-row">
               <div className="info-label">Name: </div>
-              <div className="info-text">First Last</div>
+              <div className="info-text">{tutor["firstName"]} {tutor["lastName"]}</div>
             </div>
             <div className="info-row">
               <div className="info-label">Email:</div>
-              <div className="info-text">Email@email.com</div>
+              <div className="info-text">{tutor["email"]}</div>
+            </div>
+            <div className="info-row">
+              <div className="info-label">ID:</div>
+              <div className="info-text">{tutor["id"]}</div>
             </div>
             <div className="info-row">
               <div className="info-label">Courses:</div>
-              <div className="info-text">CSCI 110, CSCI 111, CSCI 112</div>
+              <div className="info-text">{String(courseList)}</div>
             </div>
             <div className="button-group">
               <button type="button" onClick={() => navigate(`/edit/${id}`)}>Edit Tutor</button>

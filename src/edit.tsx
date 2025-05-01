@@ -3,7 +3,6 @@ import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useNavigate } from 'react-router-dom';
-import { createTutor } from "./services/tutorServices.ts";
 import { useParams } from 'react-router-dom';
 
 type AllCourseType = Schema["Course"]["type"];
@@ -18,6 +17,29 @@ function Add() {
     const [suggestions, setSuggestions] = useState<Array<Schema["Course"]["type"]>>([]);//hold/track the live search results
     const [selectedCourses, setSelectedCourses] = useState<Array<Schema["Course"]["type"]>>([]);//keep track of which courses the user has selected
     const [allCourses, setAllCourses] = useState<AllCourseType[]>([]);
+    const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
+    const [first, setFirst] = useState("");
+    const [last, setLast] = useState("");
+    const [email, setEmail] = useState("");
+
+    useEffect(() => {
+        client.models.Tutor.observeQuery().subscribe({
+          next: (data) => {
+            const validTutors = data.items.filter((tutor) => tutor?.firstName && tutor?.lastName && tutor?.email);
+            setTutors(validTutors);
+          },
+        });
+      }, []);//tells react to run this effect only once when the component mounts
+    
+    useEffect(() => {
+      const matchedTutor = tutors.find(t => t.id === id);
+      if (matchedTutor) {
+        setFirst(matchedTutor.firstName);
+        setLast(matchedTutor.lastName);
+        setEmail(matchedTutor.email);
+      }
+    }, [tutors, id]);
+
 
     function validateForm() {
       const inputs = document.querySelectorAll('#myForm input[type="text"]');
@@ -36,7 +58,8 @@ function Add() {
       });
 
       if (allFilled) {
-        createTutor(values.firstName, values.lastName, values.email);
+        //createTutor(values.firstName, values.lastName, values.email);
+        //Update tutor
         inputs.forEach(input => {
           input.value = '';
         });
@@ -105,23 +128,27 @@ function Add() {
               <button className="top-bar-button" onClick={signOut}>Sign Out</button>
             </div>
             {/* Input box */}
-            <center><h1>Add Tutor</h1></center>
+            <center><h1>Edit Tutor</h1></center>
             <div className="center-box">
               <form id="myForm">
                 <div className="form-group">
                   <label>First Name:</label>
-                  <input type="text" id="firstName"></input>
+                  <input type="text" id="firstName" 
+                    placeholder="First Name…" value={first} onChange={(e) => (setFirst(e.target.value))}></input>
                 </div>
                 <div className="form-group">
                   <label>Last Name:</label>
-                  <input type="text" id="lastName"></input>
+                  <input type="text" id="lastName" 
+                    placeholder="Last Name…" value={last} onChange={(e) => (setLast(e.target.value))} ></input>
                 </div>
                 <div className="form-group">
                   <label>Email:</label>
-                  <input type="text" id="email"></input>
+                  <input type="text" id="email"
+                    placeholder="Email…" value={email} onChange={(e) => (setEmail(e.target.value))} ></input>
                 </div>
-                <div>
-                  <input type="text" placeholder="Search courses…" value={courseSearch}
+                <div className="form-group">
+                  <label>Courses:</label>
+                  <input type="text" placeholder="Search courses…" value={courseSearch} id="courses"
                     onChange={e => setCourseSearch(e.target.value)}></input>
                 </div>
                 <div className="button-group">
