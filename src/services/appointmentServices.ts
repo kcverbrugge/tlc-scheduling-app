@@ -1,3 +1,5 @@
+//Not worth putting in time right now, bigger fish to fry
+
 // import { generateClient } from "aws-amplify/data";
 // import type { Schema } from "../../amplify/data/resource";
 // import { isDateTime } from "../utils/validators";
