@@ -105,7 +105,7 @@ function Home() {
                 style={{ border: 'none', background: 'transparent' }}
                 onMouseEnter={(e) => e.target.style.color = '#007BFF'}
                 onMouseLeave={(e) => e.target.style.color = '#000'}>
-                <span>{Tutor.firstName}, {Tutor.lastName}, {Tutor.id}</span>
+                <span>{Tutor.firstName}, {Tutor.lastName}, {Tutor.email}</span>
                 </button>
                 {/* End Name as button */}
                 {/* Ellipsis */}

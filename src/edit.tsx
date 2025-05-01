@@ -4,6 +4,7 @@ import { generateClient } from "aws-amplify/data";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { updateTutor } from "./services/tutorServices.ts"
 
 type AllCourseType = Schema["Course"]["type"];
 const client = generateClient<Schema>();
@@ -58,8 +59,7 @@ function Add() {
       });
 
       if (allFilled) {
-        //createTutor(values.firstName, values.lastName, values.email);
-        //Update tutor
+        updateTutor(id, values.firstName, values.lastName, values.email);
         inputs.forEach(input => {
           input.value = '';
         });
