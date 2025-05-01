@@ -36,6 +36,13 @@ export async function createSchedule(tutorId: string, startTime: string | Date |
     throw new Error("A schedule already exists for this tutor during the specified time.");
   }
 
+  const result = await client.models.Schedule.create({
+    tutorId: tutorId,
+    startTime: start.toISOString(),
+    endTime: end.toISOString(),
+    ...(roomId ? { roomId } : {}),
+  });
+
 
   //if recurrenceEnd is populated, create schedules until that specified date
   if (recurrenceEnd) {
@@ -49,7 +56,13 @@ export async function createSchedule(tutorId: string, startTime: string | Date |
     //collects the errors so recurringSchedules can continue to populate
     const errors: string[] = [];
 
-    while (start < cleanRecurrenceEnd) {
+    let isAllowed: boolean = true;
+
+    do {
+      isAllowed = true;
+      start.setDate(start.getDate() + 7); // Move to next week
+      end.setDate(end.getDate() + 7); // Move to next week
+
       const existingRecurrence = await client.models.Schedule.list({
         filter: {
           tutorId: { eq: tutorId },
@@ -58,40 +71,34 @@ export async function createSchedule(tutorId: string, startTime: string | Date |
         },
       });
   
-      // I don't like how this can exit before all the dates before the recurrence end are scheduled
+      // store error messages into an array that will be thrown later
       if (existingRecurrence.data.length > 0) {
         const overlappingSchedule = new Date(existingRecurrence.data[0].startTime);
 
         errors.push(`A schedule already exists for this tutor on ${overlappingSchedule.getMonth()+1}/${overlappingSchedule.getDate()}/${overlappingSchedule.getFullYear()} at ${overlappingSchedule.toLocaleTimeString()}.`);
 
-        continue;
+        //make sure that the schedule doesn't get pushed to the DB anyways
+        isAllowed = false;
       }
 
-      await client.models.Schedule.create({
-        tutorId,
-        startTime: start.toISOString(),
-        endTime: end.toISOString(),
-        recurrenceEnd: cleanRecurrenceEnd.toISOString(),
-        ...(roomId ? { roomId } : {}),
-      })
-  
-      start.setDate(start.getDate() + 7); // Move to next week
-      end.setDate(end.getDate() + 7); // Move to next week
-    }
+      if (isAllowed) {
+        await client.models.Schedule.create({
+          tutorId: tutorId,
+          startTime: start.toISOString(),
+          endTime: end.toISOString(),
+          recurrenceEnd: cleanRecurrenceEnd.toISOString(),
+          ...(roomId ? { roomId } : {}),
+        })
+      }
+    } while (start < cleanRecurrenceEnd);
+
     if (errors.length > 0) {
       //throws all the strings and errors
       throw new Error(`Some schedules failed:\n${errors.join("\n")}`);
     }
-  } else {
-    const result = await client.models.Schedule.create({
-      tutorId: tutorId,
-      startTime: start.toISOString(),
-      endTime: end.toISOString(),
-      ...(roomId ? { roomId } : {}),
-    });
-
-    return result;
   }
+  //will return the first schedule of the recurrence
+  return result.data;
 }
 
 export async function deleteSchedule(id: string) {
@@ -129,21 +136,15 @@ export async function deleteSchedule(id: string) {
     }
   }
 
-  return result; //will return NULL if no schedule is found with the ID given
+  return result.data; //will return NULL if no schedule is found with the ID given
 }
 
-/**
- * List all schedules for a tutor
- */
 export async function listSchedulesByTutor(tutorId: string) {
   return await client.models.Schedule.list({
     filter: { tutorId: { eq: tutorId } },
   });
 }
 
-/**
- * Observe all schedules
- */
 export function observeSchedules(callback: (schedules: Schema["Schedule"]["type"][]) => void) {
   return client.models.Schedule.observeQuery().subscribe({
     next: ({ items }) => callback(items),

@@ -34,7 +34,11 @@ function Add() {
       });
 
       if (allFilled) {
-        createTutor(values.firstName, values.lastName, values.email);
+        try {
+          createTutor(String(id), values.firstName, values.lastName, values.email);
+        } catch (err) {
+          alert(err);
+        }
         inputs.forEach(input => {
           input.value = '';
           input.classList.remove('invalid');

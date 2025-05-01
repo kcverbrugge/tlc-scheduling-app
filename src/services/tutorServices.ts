@@ -72,8 +72,9 @@ export async function setFirstName(id: string, newFirstName: string | null) {
     id: id,
     firstName: normalizeName(newFirstName)
   });
+  
 
-  return result;
+  return result.data;
 }
 
 export async function setLastName(id: string, newLastName: string | null) {
@@ -86,7 +87,7 @@ export async function setLastName(id: string, newLastName: string | null) {
     lastName: normalizeName(newLastName)
   });
 
-  return result;
+  return result.data;
 }
 
 export async function setEmail(id: string, newEmail: string | null) {
@@ -113,7 +114,7 @@ export async function setEmail(id: string, newEmail: string | null) {
     email: cleanEmail
   });
 
-  return result;
+  return result.data;
 }
 
 export async function setStatus(id: string, newStatus: string) {
@@ -127,7 +128,7 @@ export async function setStatus(id: string, newStatus: string) {
     status: cleanStatus
   });
 
-  return result;
+  return result.data;
 }
 
 export async function setContactHours(id: string, newContactHours: number) {
@@ -140,7 +141,7 @@ export async function setContactHours(id: string, newContactHours: number) {
     contactHours: newContactHours
   });
 
-  return result;
+  return result.data;
 }
 
 export async function updateTutor(id: string, newFirstName: string | null, newLastName: string | null, newEmail: string | null) {
@@ -177,7 +178,7 @@ export async function updateTutor(id: string, newFirstName: string | null, newLa
     email: cleanEmail,
   });
 
-  return result;
+  return result.data;
 }
 
 export async function getTutor(id: string) {
@@ -195,7 +196,7 @@ export async function getTutor(id: string) {
 export async function deleteTutor(id: string) {
   const result = await client.models.Tutor.delete({ id }, { authMode: "userPool" });
 
-  return result;
+  return result.data;
 }
 
 export function observeTutors(callback: (tutors: Schema["Tutor"]["type"][]) => void) {

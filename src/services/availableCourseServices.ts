@@ -15,7 +15,7 @@ export async function addCourseToTutor(tutorId: string, courseId: string) {
     throw new Error("Failed to add course to tutor.");
   }
 
-  return result;
+  return result.data;
 }
 
 export async function getCoursesForTutor(tutorId: string) {
@@ -45,7 +45,7 @@ export async function deleteCourseForTutor(id: string) {
     throw new Error("Failed to delete course for the tutor.");
   }
 
-  return result;
+  return result.data;
 
 }
 

@@ -40,7 +40,7 @@ export async function createTutorSession(tutorId: string, startTime: string | Da
       endTime: end.toISOString(),
     });
 
-    return result;
+    return result.data;
   }
 
   const result = await client.models.TutorSession.create({
@@ -48,7 +48,7 @@ export async function createTutorSession(tutorId: string, startTime: string | Da
       startTime: start.toISOString(),
   });
 
-  return result;
+  return result.data;
 }
 
 export async function setEndTime(tutorId: string, endTime: string | Date | null) {
@@ -67,22 +67,25 @@ export async function setEndTime(tutorId: string, endTime: string | Date | null)
     endTime: newEndTime.toISOString(),
   });
 
-  return result;
+  return result.data;
 }
 
 export async function deleteTutorSession(id: string) {
   const result = await client.models.TutorSession.delete({ id });
 
-  return result; //will return NULL if no TutorSession is found with the ID given
+  return result.data; //will return NULL if no TutorSession is found with the ID given
 }
 
 /**
  * List all TutorSessions for a tutor
  */
 export async function listTutorSessionsByTutor(tutorId: string) {
-  return await client.models.TutorSession.list({
+  const result = await client.models.TutorSession.list({
     filter: { tutorId: { eq: tutorId } },
   });
+
+  //returns array of a tutor's sessions
+  return result.data;
 }
 
 /**

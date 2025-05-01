@@ -47,22 +47,24 @@ export async function createCallout(tutorId: string, startTime: string | Date | 
       reason: reason.trim(),
   });
 
-  return result;
+  return result.data;
 }
 
 export async function deleteCallout(id: string) {
   const result = await client.models.Callout.delete({ id });
 
-  return result; //will return NULL if no Callout is found with the ID given
+  return result.data; //will return NULL if no Callout is found with the ID given
 }
 
 /**
  * List all Callouts for a tutor
  */
 export async function listCalloutsByTutor(tutorId: string) {
-  return await client.models.Callout.list({
+  const result = await client.models.Callout.list({
     filter: { tutorId: { eq: tutorId } },
   });
+
+  return result.data;
 }
 
 /**

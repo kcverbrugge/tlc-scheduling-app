@@ -50,7 +50,7 @@ export async function createCourse(departmentCode: string | null, courseNumber: 
     courseName: cleanCourseName,
   });
 
-  return result;
+  return result.data;
 }
 
 export async function setDepartmentCode(id: string, newDepartmentCode: string | null) {
@@ -69,7 +69,7 @@ export async function setDepartmentCode(id: string, newDepartmentCode: string | 
     departmentCode: cleanDepartmentCode,
   });
 
-  return result;
+  return result.data;
 }
 
 export async function setCourseNumber(id: string, newCourseNumber: string | null) {
@@ -88,7 +88,7 @@ export async function setCourseNumber(id: string, newCourseNumber: string | null
     courseNumber: cleanCourseNumber
   });
 
-  return result;
+  return result.data;
 }
 
 export async function setCourseName(id: string, newCourseName: string | null) {
@@ -103,7 +103,7 @@ export async function setCourseName(id: string, newCourseName: string | null) {
     courseName: cleanCourseName
   });
 
-  return result;
+  return result.data;
 }
 
 export async function deleteCourse(id: string) {
@@ -111,7 +111,7 @@ export async function deleteCourse(id: string) {
     id: id
   });
 
-  return result;
+  return result.data;
 }
 
 //subscription not necessary since courses are not going to be added/removed frequently, this will likely be a presemester process
