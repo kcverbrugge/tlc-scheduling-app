@@ -2,8 +2,7 @@ import { useEffect, useState} from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams} from 'react-router-dom';
 import { getCoursesForTutor } from "./services/availableCourseServices.ts";
 
 const client = generateClient<Schema>();
@@ -12,7 +11,6 @@ function Info() {
   const { signOut } = useAuthenticator();
   const navigate = useNavigate();
   const { id } = useParams();
-
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
 
   useEffect(() => {
@@ -68,7 +66,6 @@ function Info() {
               <div className="info-text">{String(courseList)}</div>{/*///////////////////////////////////////////////////////////////////*/}
             </div>
             <div className="button-group">
-              <button type="button" onClick={() => navigate(`/edit/${id}`)}>Edit Tutor</button>
               <button type="button" onClick={() => navigate('/')}>Home</button>
             </div>
           </div>

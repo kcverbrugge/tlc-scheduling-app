@@ -9,18 +9,9 @@ import Add from "./add.tsx";
 import Edit from "./edit.tsx";
 import Info from "./info.tsx";
 
-
 function GetUser() {
   const [userGroup, setUserGroup] = useState<string | null>(null);
-  //const { signOut } = useAuthenticator();
-
-  /*
-  The issue here was caused by fetching the session outside of the useEffect hook.
-  When fetchAuthSession ran, the session data (and thus the token payload) wasn't available yet,
-  so 'groups' ended up being undefined (or an empty array). By moving the session fetch
-  inside the useEffect, we ensure that the token payload is available when we try to extract 
-  'cognito:groups', which resolves the bug.
-  */
+  const { signOut } = useAuthenticator();
 
   useEffect(() => {
     async function fetchAndSetUserGroup() { // Use an async function to fetch the session so we can wait for it to resolve before fetching
@@ -85,6 +76,7 @@ function GetUser() {
         <button onClick={signOut}>Sign out</button>
       </div>
     );
+  
   }
 }
 
@@ -99,5 +91,6 @@ function App() {
     </Authenticator>
   );
 }
+
 
 export default App;

@@ -2,9 +2,9 @@ import { useEffect, useState} from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { updateTutor } from "./services/tutorServices.ts"
+
 
 type AllCourseType = Schema["Course"]["type"];
 const client = generateClient<Schema>();
@@ -13,7 +13,7 @@ function Add() {
     const { signOut } = useAuthenticator();
     const navigate = useNavigate();
     const { id } = useParams();
-
+    
     const [courseSearch, setCourseSearch] = useState("");// Hold/track what the user types
     const [suggestions, setSuggestions] = useState<Array<Schema["Course"]["type"]>>([]);//hold/track the live search results
     const [selectedCourses, setSelectedCourses] = useState<Array<Schema["Course"]["type"]>>([]);//keep track of which courses the user has selected

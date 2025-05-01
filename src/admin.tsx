@@ -130,6 +130,12 @@ function Home() {
                       border: 'none',
                       zIndex: 1000,
                     }}>
+                    <button style={{ display: 'flex', width: '100%' }}>
+                      Change Status
+                    </button>
+                    <button style={{ display: 'flex', width: '100%' }}>
+                      Callout
+                    </button>
                     <button onClick={() => navigate(`/edit/${menuState.tutor.id}`)} style={{ display: 'flex', width: '100%' }}>
                       Edit Tutor
                     </button>
