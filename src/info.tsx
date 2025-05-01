@@ -65,7 +65,7 @@ function Info() {
             </div>
             <div className="info-row">
               <div className="info-label">Courses:</div>
-              <div className="info-text">{String(courseList)}</div>
+              <div className="info-text">{String(courseList)}</div>{/*///////////////////////////////////////////////////////////////////*/}
             </div>
             <div className="button-group">
               <button type="button" onClick={() => navigate(`/edit/${id}`)}>Edit Tutor</button>

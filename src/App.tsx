@@ -67,6 +67,7 @@ function GetUser() {
       </Router>
     );
   } else {
+    /*
     return (
       <Router>
         <Routes>
@@ -77,14 +78,13 @@ function GetUser() {
         </Routes>
       </Router>
     );
-    /*
+    */
     return (
       <div>
         <p>You are not part of a recognized user group.</p> 
         <button onClick={signOut}>Sign out</button>
       </div>
     );
-    */
   }
 }
 

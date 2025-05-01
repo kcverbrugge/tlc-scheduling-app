@@ -120,7 +120,7 @@ function Add() {
                 </div>
                 <div className="form-group">
                   <label>Courses:</label>
-                  <input type="text" placeholder="Search courses…" value={courseSearch}
+                  <input type="text" placeholder="Search courses…" value={courseSearch}////////////////////////////////////////////
                     onChange={e => setCourseSearch(e.target.value)}></input>
                 </div>
                 <div className="button-group">
