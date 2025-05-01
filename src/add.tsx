@@ -35,7 +35,7 @@ function Add() {
 
       if (allFilled) {
         try {
-          createTutor(String(id), values.firstName, values.lastName, values.email);
+          createTutor(values.firstName, values.lastName, values.email);
         } catch (err) {
           alert(err);
         }
