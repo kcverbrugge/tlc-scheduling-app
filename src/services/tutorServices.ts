@@ -10,12 +10,13 @@ import type { Schema } from "../../amplify/data/resource";
 import { STATUSES } from "../../amplify/enums/statusEnum";
 import { isValidStatus, isEmailFormat } from "../utils/validators";
 import { normalizeName, normalizeEmail, normalizeStatus } from "../utils/normalizers";
+import { addCoursesToTutor } from "./availableCourseServices";
 
 
 
 const client = generateClient<Schema>();
 
-export async function createTutor(firstName: string | null, lastName: string | null, email: string | null) {
+export async function createTutor(firstName: string | null, lastName: string | null, email: string | null, courses?: Schema["Course"]["type"][] | null) {
   //checks to see if raw inputs are null, once checked, then the trimmed versions are checked. 
   //This is because typescript doesn't allow trim to be used on nullable strings, so they must
   //be checked to be null.
@@ -57,6 +58,10 @@ export async function createTutor(firstName: string | null, lastName: string | n
   }
   if(!tutorData) {
     throw new Error("Error creating tutor.");
+  }
+
+  if (courses && courses.length > 0) {
+    await addCoursesToTutor(tutorData.id, courses);
   }
 
   return tutorData;
@@ -144,7 +149,7 @@ export async function setContactHours(id: string, newContactHours: number) {
   return result.data;
 }
 
-export async function updateTutor(id: string, newFirstName: string | null, newLastName: string | null, newEmail: string | null) {
+export async function updateTutor(id: string, newFirstName: string | null, newLastName: string | null, newEmail: string | null, courses?: Schema["Course"]["type"][]) {
   if (!newFirstName || !normalizeName(newFirstName)) {
     throw new Error("First name cannot be empty.");
   }
@@ -169,6 +174,10 @@ export async function updateTutor(id: string, newFirstName: string | null, newLa
 
   if (existing.data.some(tutor => tutor.id !== id)) {
     throw new Error(`Email ${newEmail.trim()} already exists.`); //perhaps display more information on the student already found inthe DB
+  }
+
+  if (courses && courses.length > 0) {
+    await addCoursesToTutor(id, courses);
   }
 
   const result = await client.models.Tutor.update({

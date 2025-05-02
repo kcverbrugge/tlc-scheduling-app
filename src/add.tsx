@@ -5,6 +5,8 @@ import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useNavigate } from 'react-router-dom';
 import { createTutor } from "./services/tutorServices.ts";
 
+
+
 type AllCourseType = Schema["Course"]["type"];
 const client = generateClient<Schema>();
 
@@ -35,7 +37,7 @@ function Add() {
 
       if (allFilled) {
         try {
-          createTutor(values.firstName, values.lastName, values.email);
+          createTutor(values.firstName, values.lastName, values.email, selectedCourses);
         } catch (err) {
           alert(err);
         }
