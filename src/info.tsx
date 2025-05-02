@@ -3,7 +3,7 @@ import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useNavigate, useParams} from 'react-router-dom';
-import { getCoursesForTutor } from "./services/availableCourseServices.ts";
+import { getDetailedCoursesForTutor } from "./services/availableCourseServices.ts";
 
 const client = generateClient<Schema>();
     
@@ -33,7 +33,7 @@ function Info() {
     }
   }
 
-  let courseList = getCoursesForTutor(String(id));
+  let courseList = getDetailedCoursesForTutor(String(id));
 
   return(
     <main>
