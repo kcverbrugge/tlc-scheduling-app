@@ -24,18 +24,17 @@ function Add() {
       let allFilled = true;
       const values: { [key: string]: string } = {};
 
-      for (let i = 0; i < inputs.length-1; i++) {
-        const input = inputs[i];
+      inputs.forEach(input => {
+        if (input.id === "courses") return; //skip the courses input
         const value = input.value.trim();
         if (!value) {
           input.classList.add('invalid');
           allFilled = false;
-          break;
         } else {
           input.classList.remove('invalid');
           values[input.id] = value;
         }
-      }
+      });
 
       if (allFilled) {
         try {
@@ -78,7 +77,6 @@ function Add() {
       loadAllCourses().catch(console.error); // kick off the loader and log any errors
       return () => {
         isCancelled = true;  // cleanup - prevent setAllCourses after unmount
-        
       };
     }, []);  
 
@@ -128,7 +126,7 @@ function Add() {
                 </div>
                 <div className="form-group">
                   <label>Courses:</label>
-                  <input type="text" placeholder="Search courses…" value={courseSearch}////////////////////////////////////////////
+                  <input type="text" placeholder="Search courses…" id="courses" value={courseSearch}
                     onChange={e => setCourseSearch(e.target.value)}></input>
                 </div>
                 <div className="button-group">

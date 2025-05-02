@@ -48,18 +48,17 @@ function Add() {
       const values: { [key: string]: string } = {};
 
       //Check if all inputs except for the last one are filled
-      for (let i = 0; i < inputs.length-1; i++) {
-        const input = inputs[i];
+      inputs.forEach(input => {
+        if (input.id === "courses") return; //skip the courses input
         const value = input.value.trim();
         if (!value) {
           input.classList.add('invalid');
           allFilled = false;
-          break;
         } else {
           input.classList.remove('invalid');
           values[input.id] = value;
         }
-      }
+      });
 
       if (allFilled) {
         try {
@@ -157,7 +156,7 @@ function Add() {
                 </div>
                 <div className="form-group">
                   <label>Courses:</label>
-                  <input type="text" placeholder="Search courses…" value={courseSearch} id="courses"////////////////////////////////////////////////
+                  <input type="text" placeholder="Search courses…" id="courses" value={courseSearch} ////////////////////////////////////////////////
                     onChange={e => setCourseSearch(e.target.value)}></input>
                 </div>
                 <div className="button-group">
