@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "test": "jest"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.5.5",
@@ -25,9 +24,6 @@
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "@types/jest": "^26.0.20",
-    "jest": "^26.6.3",
-    "ts-jest": "^26.4.4",
     "aws-cdk": "^2.138.0",
     "aws-cdk-lib": "^2.138.0",
     "constructs": "^10.3.0",
