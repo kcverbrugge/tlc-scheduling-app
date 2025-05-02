@@ -24,16 +24,18 @@ function Add() {
       let allFilled = true;
       const values: { [key: string]: string } = {};
 
-      inputs.forEach(input => {
+      for (let i = 0; i < inputs.length-1; i++) {
+        const input = inputs[i];
         const value = input.value.trim();
         if (!value) {
           input.classList.add('invalid');
           allFilled = false;
+          break;
         } else {
           input.classList.remove('invalid');
           values[input.id] = value;
         }
-      });
+      }
 
       if (allFilled) {
         try {

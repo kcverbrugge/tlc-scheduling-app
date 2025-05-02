@@ -47,20 +47,23 @@ function Add() {
       let allFilled = true;
       const values: { [key: string]: string } = {};
 
-      inputs.forEach(input => {
+      //Check if all inputs except for the last one are filled
+      for (let i = 0; i < inputs.length-1; i++) {
+        const input = inputs[i];
         const value = input.value.trim();
         if (!value) {
           input.classList.add('invalid');
           allFilled = false;
+          break;
         } else {
           input.classList.remove('invalid');
           values[input.id] = value;
         }
-      });
+      }
 
       if (allFilled) {
         try {
-          updateTutor(String(id), values.firstName, values.lastName, values.email);
+          updateTutor(String(id), values.firstName, values.lastName, values.email, selectedCourses);
         } catch (err) {
           alert(err);
         }

@@ -10,7 +10,6 @@ export function isEmailFormat(email: string) {
   return emailPattern.test(email);
 }
 
-
 //Course Validators
 export function isDepartmentCode(departmentCode: string) {
   const departmentCodePattern = /^([A-Z]|[a-z]){4}$/;
