@@ -5,7 +5,7 @@ import {
     normalizeDepartmentCode,
     normalizeCourseNumber,
     normalizeCourseName,
-  } from './normalizers';
+  } from '../utils/normalizers';
 
 
 function assertEqual(testValue: any, expectedValue: any, message: string) {
