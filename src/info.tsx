@@ -12,6 +12,7 @@ function Info() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [tutors, setTutors] = useState<Array<Schema["Tutor"]["type"]>>([]);
+  const [courseString, setCourseString] = useState("Courses: ");
 
   useEffect(() => {
     client.models.Tutor.observeQuery().subscribe({
@@ -33,7 +34,18 @@ function Info() {
     }
   }
 
-  let courseList = getDetailedCoursesForTutor(String(id));
+  useEffect(() => {
+    async function fetchCourses() {
+      const courseArray = await getDetailedCoursesForTutor(String(id));
+      let result = "";
+      for (let i = 0; i < courseArray.length - 1; i++) {
+        result += `${courseArray[i].departmentCode} ${courseArray[i].courseNumber} - ${courseArray[i].courseName}\n`;
+      }
+      result += `${courseArray[courseArray.length - 1].departmentCode} ${courseArray[courseArray.length - 1].courseNumber} - ${courseArray[courseArray.length - 1].courseName}`;
+      setCourseString(result);
+    }
+    fetchCourses();
+  }, [id]);
 
   return(
     <main>
@@ -63,7 +75,7 @@ function Info() {
             </div>
             <div className="info-row">
               <div className="info-label">Courses:</div>
-              <div className="info-text">{String(courseList)}</div>{/*///////////////////////////////////////////////////////////////////*/}
+              <div className="info-text">{courseString}</div>
             </div>
             <div className="button-group">
               <button type="button" onClick={() => navigate('/')}>Home</button>

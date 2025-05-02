@@ -168,3 +168,67 @@ input.invalid {
   font-weight: bold;
   margin-right: 10px;
 }
+
+.info-text {
+  white-space: pre-line;
+}
+
+.course-input-container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.course-tag {
+  display: flex;
+  align-items: center;
+  background-color: #eee;
+  border-radius: 16px;
+  padding: 4px 8px;
+  margin: 2px;
+  font-size: 14px;
+}
+
+.remove-tag {
+  margin-left: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #888;
+}
+
+.course-search-input {
+  flex: 1;
+  border: none;       
+  padding: 4px;         
+  font-size: 14px;
+  min-width: 100px;
+  background: transparent;
+}
+
+.course-search-input:focus {
+  outline: none;        
+}
+
+.courseSearch {
+  position: absolute;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+}
+
+.courseSearch li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.courseSearch li:hover {
+  background-color: #f0f0f0;
+}

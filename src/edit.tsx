@@ -4,6 +4,7 @@ import { generateClient } from "aws-amplify/data";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { updateTutor } from "./services/tutorServices.ts"
+import { getDetailedCoursesForTutor } from "./services/availableCourseServices.ts";
 
 
 type AllCourseType = Schema["Course"]["type"];
@@ -38,6 +39,9 @@ function Add() {
         setFirst(matchedTutor.firstName ?? "No Tutor Found");
         setLast(matchedTutor.lastName ?? "No Tutor Found");
         setEmail(matchedTutor.email ?? "No Tutor Found");
+        getDetailedCoursesForTutor(String(id)).then(courseArray => {
+          setSelectedCourses(courseArray);
+        })
       }
     }, [tutors, id]);
 
@@ -160,8 +164,41 @@ function Add() {
                 </div>
                 <div className="form-group">
                   <label>Courses:</label>
-                  <input type="text" placeholder="Search courses…" id="courses" value={courseSearch} ////////////////////////////////////////////////
-                    onChange={e => setCourseSearch(e.target.value)}></input>
+                  <div className="course-input-container">
+                    {selectedCourses.map(c => (
+                      <div className="course-tag" key={c.id}>
+                        {c.departmentCode} {c.courseNumber}
+                        <span
+                          className="remove-tag"
+                          onClick={() => setSelectedCourses(prev => prev.filter(x => x.id !== c.id))}>
+                          &times;
+                        </span>
+                      </div>
+                    ))}
+                    <input
+                      type="text"
+                      placeholder="Search courses…"
+                      value={courseSearch}
+                      id = "courses"
+                      onChange={e => setCourseSearch(e.target.value)}
+                      className="course-search-input"/>
+                  </div>
+                  {suggestions.length > 0 && (
+                    <ul className="courseSearch">
+                      {suggestions.map(c => (
+                        <li key={c.id}
+                          onClick={() => {
+                            if (!selectedCourses.some(sc => sc.id === c.id)) {
+                              setSelectedCourses(prev => [...prev, c]);
+                            }
+                            setCourseSearch("");
+                            setSuggestions([]);
+                          }}>
+                          {c.departmentCode} {c.courseNumber} — {c.courseName}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <div className="button-group">
                   <button type="button" onClick={validateForm}>Update Tutor</button>
@@ -170,38 +207,6 @@ function Add() {
               </form>
             </div>
             {/* End Input box */}
-            {/* COURSE SEARCH */}
-            {suggestions.length > 0 && (  //If there are any suggestions, show them
-              <ul style={{ border: "1px solid #ccc", maxHeight: 200, overflowY: "auto" }}>
-                {suggestions.map(c => ( //For each suggestion, show the course name and number
-                  <li key={c.id} onClick={() => {
-                    setSelectedCourses(prev => [...prev, c]); //add the course to the selected list
-                    setCourseSearch("");
-                    setSuggestions([]);
-                  }}>
-                    {c.departmentCode} {c.courseNumber} — {c.courseName} 
-                  </li>
-                ))}
-              </ul>
-            )}
-            {/* END COURSE SEARCH */}
-            {/* SELECTED COURSES */}
-            {selectedCourses.length > 0 && (  //If there are any selected courses, show them
-              <div>
-                <strong>Selected courses:</strong>
-                <ul>
-                  {selectedCourses.map(c => ( //For each selected course, show the course name and number
-                    <li key={c.id}>
-                      {c.departmentCode} {c.courseNumber} — {c.courseName}
-                      <button type="button" onClick={() =>
-                        setSelectedCourses(prev => prev.filter(x => x.id !== c.id)) //remove the course from the selected list
-                      }>Remove</button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {/* END SELECTED COURSES */}
           </body>
         </main>
     )

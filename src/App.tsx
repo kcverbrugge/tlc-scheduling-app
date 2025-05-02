@@ -59,12 +59,23 @@ function GetUser() {
     );
   } else {
     return (
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/add" element={<Add />} />
+          <Route path="/edit/:id" element={<Edit />} />
+          <Route path="/info/:id" element={<Info />} />
+        </Routes>
+      </Router>
+    );
+    /*
+    return (
       <div>
         <p>You are not part of a recognized user group.</p> 
         <button onClick={signOut}>Sign out</button>
       </div>
     );
- 
+    */
   }
 }
 
