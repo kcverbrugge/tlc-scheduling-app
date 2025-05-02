@@ -61,9 +61,11 @@ function Add() {
       });
 
       if (allFilled) {
+        let goHome = true;
         try {
           updateTutor(String(id), values.firstName, values.lastName, values.email, selectedCourses);
         } catch (err) {
+          goHome = false;
           alert(err);
         }
 
@@ -71,7 +73,9 @@ function Add() {
           input.value = '';
           input.classList.remove('invalid');
         });
-        
+        if (goHome) {
+          navigate('/');
+        }
       }
     }
 
