@@ -5,10 +5,13 @@ import { generateClient } from "aws-amplify/data";
 import { fetchAuthSession } from "aws-amplify/auth";
 import { Authenticator } from "@aws-amplify/ui-react";
 import { createTutor } from "./services/tutorServices";
+import { createSchedule } from "./services/scheduleServices";
+// import { NetworkAcl } from "aws-cdk-lib/aws-ec2";
 
-
-type AllCourseType = Schema["Course"]["type"];
 const client = generateClient<Schema>();
+
+type Course = Schema["Course"]["type"];
+
 
 function Admin() {
   const { signOut } = useAuthenticator();
@@ -20,7 +23,14 @@ function Admin() {
   const [courseSearch, setCourseSearch] = useState("");// Hold/track what the user types
   const [suggestions, setSuggestions] = useState<Array<Schema["Course"]["type"]>>([]);//hold/track the live search results
   const [selectedCourses, setSelectedCourses] = useState<Array<Schema["Course"]["type"]>>([]);//keep track of which courses the user has selected
-  const [allCourses, setAllCourses] = useState<AllCourseType[]>([]);
+  const [allCourses, setAllCourses] = useState<Course[]>([]);
+
+  const [availability, setAvailability] = useState<Array<{  //State to hold the list of available time slots for the tutor
+    day: string;
+    startTime: string;  //09:00
+    endTime: string;    //11:00
+    recurrenceEnd?: string;  //2025-12-31
+  }>>([]);
 
   // useEffect(() => {
   //   client.models.AllCourse.list({ limit: 10 })
@@ -30,29 +40,35 @@ function Admin() {
   //     .catch(err => console.error("Failed to list AllCourse:", err));
   // }, []);
 
-  useEffect(() => {
+  useEffect(() => { //This function is used to fetch all courses from the database
+
+
     let isCancelled = false;  //flag to prevent state updates if the component unmount
     async function loadAllCourses() {
       let nextToken: string | undefined = undefined;  // pagination cursor - undefined means “start” or “no more pages”
-      const courseList: AllCourseType[] = [];  //accumulator for all fetched course objects
+      const courseList: Course[] = [];  //accumulator for all fetched course objects
       do {
         const resp = await client.models.Course.list({ //Fetch the list of courses from the database
           limit: 250,       // how many items to fetch per request
           nextToken,        // pagination cursor from previous iteration
         }) as {
-          data?: (AllCourseType | null)[];
+          data?: (Course | null)[];
           nextToken?: string;
         };
+        
   
-        const page = resp.data?.filter((c): c is AllCourseType => c !== null) ?? [];        // filter out any null placeholders, defaulting to an empty array
+        const page = resp.data?.filter((c): c is Course => c !== null) ?? [];        // filter out any null placeholders, defaulting to an empty array
         courseList.push(...page); // add this page’s courses into our growing list
         nextToken = resp.nextToken; // set up the cursor for the next loop; undefined will break the loop
       } while (nextToken); // keep going until resp.nextToken is undefined
       if (!isCancelled) {
+        console.log("Fetched courses:", courseList);
         setAllCourses(courseList);  
         // only update state if the component is still mounted
       }
     }
+
+
 
     loadAllCourses().catch(console.error); // kick off the loader and log any errors
     return () => {
@@ -101,6 +117,7 @@ function Admin() {
     //   alert("Are you fucking stupid you dumb bitch?");
     // }
   }
+  
 
   //function to handle form submission from creating a new tutor
   async function submitTutor(event: React.FormEvent<HTMLFormElement>) {
@@ -111,13 +128,13 @@ function Admin() {
     const email = formData.get("email") as string;
 
     try {
-      // 1) create the tutor record
+      // create the tutor record
       const tutor = await createTutor(firstName, lastName, email);
       if(!tutor) {  //Was ye;lling at me if I didn't insure that tutor wasn't null
         throw new Error("Tutor was null");
         
       }
-      // 2) for each selected course, create the join record
+      //for each selected course, create the join record
       await Promise.all(
         selectedCourses.map(c =>
           client.models.AvailableCourse.create({
@@ -126,6 +143,19 @@ function Admin() {
           })
         )
       );
+
+      //for each individual time slot that the user entered, add it to the schedule record
+      await Promise.all(  //Just telling it to wait until all schedules have been created
+        availability.map(slot => //Go through the availability array and add the times that the user entered into the schedule table
+          createSchedule( //Service function to create a schedule
+            tutor.id, //Link the schedule to the tutor
+            computeDateTime(slot.day, slot.startTime),  // convert the start date and time to a DateTime string
+            computeDateTime(slot.day, slot.endTime),  //Convert the end date and time to a DateTime string
+            slot.recurrenceEnd ? slot.recurrenceEnd : null  //If the user entered a recurrence end date, use it. Otherwise, set it to null
+          )
+        )
+      );
+
       setSelectedCourses([]);
       setShowForm(false);
     } catch (err) {
@@ -145,6 +175,44 @@ function Admin() {
     }
   }
 
+  //Function prompt for the user to enter the start and end time for a given day and then add it to the availability array
+  async function handleAddTime(day: string) {
+    const start = window.prompt(`Start time for ${day} (HH:MM)`) || "";
+    const end = window.prompt(`End time for ${day} (HH:MM)`) || "";
+    const recurrence = window.prompt(`Recurrence End Date for ${day} (YYYY-MM-DD, optional)`) || undefined;
+  
+    if (!start || !end) {
+      alert("Start and end time are required");
+      return;
+    }
+  
+    setAvailability(prev => [...prev, { day, startTime: start, endTime: end, recurrenceEnd: recurrence }]); 
+    //Add the new time slot to the availability array
+  }
+
+  //Here we just need to convert days (Monday)  and times (09:00) into offical DateTime strings
+  function computeDateTime(day: string, time: string): string { //Takes in strings with format 
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const targetDay = days.indexOf(day); //Convert day name to a number (0-6)
+
+    const currentDay = new Date();
+    const todaysDay = currentDay.getDay(); //1 = monday, 2 = tuesday
+
+    let daysAhead = 0;
+    if (targetDay > todaysDay) { //The target day is this week
+      daysAhead = targetDay - todaysDay;
+    } else {
+      daysAhead = 7 - (todaysDay - targetDay); //Else wrap around to next week
+    }
+
+    const date = new Date(currentDay);
+    date.setDate(currentDay.getDate() + daysAhead); //Save the correct date that we want them to work
+    const [hours, minutes] = time.split(":").map(Number); //save the hours and minutes
+    date.setHours(hours, minutes, 0, 0);  //Set the time to the correct hours and minutes
+
+    return date.toISOString();  //Return the date in the correct format
+  }
+
   return (
     <main>
       {showForm ? ( //If showForm is true, show the form to create a new tutor
@@ -154,27 +222,32 @@ function Admin() {
         <input name="lastName"  placeholder="Last Name" />
         <input name="email"     placeholder="Email" />
 
-        {/* COURSE SEARCH */}
-          <input
-            type="text"
-            placeholder="Search courses…"
-            value={courseSearch}
-            onChange={e => setCourseSearch(e.target.value)}
-          />
-          {suggestions.length > 0 && (  //If there are any suggestions, show them
-            <ul style={{ border: "1px solid #ccc", maxHeight: 200, overflowY: "auto" }}>
-              {suggestions.map(c => ( //For each suggestion, show the course name and number
-                <li key={c.id} onClick={() => {
-                  setSelectedCourses(prev => [...prev, c]); //add the course to the selected list
-                  setCourseSearch("");
-                  setSuggestions([]);
-                }}>
-                  {c.departmentCode} {c.courseNumber} — {c.courseName} 
-                </li>
-              ))}
-            </ul>
-          )}
-        
+        {/* Course Search Input */}
+            <input
+      type="text"
+      placeholder="Search courses…"
+      value={courseSearch}
+      onChange={e => setCourseSearch(e.target.value)}
+    />
+
+    <div style={{ maxHeight: "200px", overflowY: "auto", border: "1px solid black", marginTop: "0.5rem" }}>
+      {allCourses
+        .filter(c => {
+          const term = courseSearch.toLowerCase();
+          return (
+            c.departmentCode.toLowerCase().includes(term) ||
+            c.courseNumber.toLowerCase().includes(term) ||
+            c.courseName.toLowerCase().includes(term)
+          );
+        })
+        .map(c => (
+          <div key={c.id} onClick={() => setSelectedCourses(prev => [...prev, c])}>
+            {c.departmentCode} {c.courseNumber} — {c.courseName}
+          </div>
+        ))}
+    </div>
+
+
         {/* SELECTED COURSES */}
         {selectedCourses.length > 0 && (  //If there are any selected courses, show them
           <div>
@@ -191,6 +264,24 @@ function Admin() {
             </ul>
           </div>
         )}
+
+        {/* Block for gathering/showing available time slots
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>  
+        {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map(day => ( // loop through the days of the week and create a mini box for each one
+          <div key={day} style={{ border: '1px solid #ccc', padding: '0.5rem', borderRadius: '8px', width: '150px' }}>
+            <strong>{day}</strong>
+            <button type="button" onClick={() => handleAddTime(day)}>Add Time</button>
+            <ul style={{ listStyleType: 'none', padding: 0 }}>
+              {availability.filter(a => a.day === day).map((slot, index) => ( // list the time slots added for that day
+                <li key={index}>
+                  {slot.startTime}–{slot.endTime}
+                  {slot.recurrenceEnd && ` (until ${slot.recurrenceEnd})`}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div> */}
 
         <button type="submit">Add Tutor</button>
         <button type="button" onClick={() => setShowForm(false)}>Cancel</button>

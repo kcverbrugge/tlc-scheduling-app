@@ -11,9 +11,12 @@ df["SUBJ"]  = df["SUBJ"].str.strip().str.upper()
 df["NUMB"]  = df["NUMB"].astype(str).str.strip()
 df["TITLE"] = df["TITLE"].str.strip()
 
+#Course-4w7x5kqabrggboin6asx4xew6q-NONE
+#Course-rsgclrhex5cdxbvjg4v5kpa5au-NONE
+
 # Initialize DynamoDB and point to your table
 dynamodb = boto3.resource("dynamodb")   #connect to DynamoDB
-table = dynamodb.Table("AllCourse-4w7x5kqabrggboin6asx4xew6q-NONE")  #point to the correct table
+table = dynamodb.Table("Course-4w7x5kqabrggboin6asx4xew6q-NONE")  #point to the correct table
 
 # Write to DynamoDB
 with table.batch_writer() as batch:
