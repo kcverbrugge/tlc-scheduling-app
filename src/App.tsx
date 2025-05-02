@@ -8,6 +8,7 @@ import FrontHome from "./frontDesk.tsx";
 import Add from "./add.tsx";
 import Edit from "./edit.tsx";
 import Info from "./info.tsx";
+import { runNormalizerTests } from "./tests/testNormalizers";
 
 function GetUser() {
   const [userGroup, setUserGroup] = useState<string | null>(null);
@@ -69,6 +70,9 @@ function GetUser() {
 }
 
 function App() {
+  useEffect(() => {
+    runNormalizerTests();
+  }, []);
   return (
     <Authenticator>
         <main>

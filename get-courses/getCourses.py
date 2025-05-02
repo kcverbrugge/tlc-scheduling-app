@@ -13,7 +13,7 @@ df["TITLE"] = df["TITLE"].str.strip()
 
 # Initialize DynamoDB and point to your table
 dynamodb = boto3.resource("dynamodb")   #connect to DynamoDB
-table = dynamodb.Table("AllCourse-4w7x5kqabrggboin6asx4xew6q-NONE")  #point to the correct table
+table = dynamodb.Table("Course-jx7t2rt6tza2liazvjmmdbedly-NONE")  #point to the correct table
 
 # Write to DynamoDB
 with table.batch_writer() as batch:
