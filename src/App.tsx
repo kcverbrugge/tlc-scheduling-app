@@ -70,9 +70,6 @@ function GetUser() {
 }
 
 function App() {
-  useEffect(() => {
-    runNormalizerTests();
-  }, []);
   return (
     <Authenticator>
         <main>
