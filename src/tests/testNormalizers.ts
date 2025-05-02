@@ -5,7 +5,6 @@ import {
     normalizeDepartmentCode,
     normalizeCourseNumber,
     normalizeCourseName,
-    normalizeDateTime
   } from './normalizers';
 
 
