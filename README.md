@@ -50,7 +50,7 @@ tree -d -I "node_modules"
     ├── tests
     └── utils
 ```
-**amplify**
+**amplify:**
 - **auth:** Authorization resources and configuration.
 - **data:** Database schema and configuration, some authorization as well.
 - **enums:** Tutor status enumerations for modularity and clean code.
@@ -72,6 +72,18 @@ Important **root directory level** files
 - **package.json** and **package-lock.json:** contain the modules and their versions. In package-lock, the modules will be locked at those versions even when updates are ran.
 
 ### Testing
+The amplify local environment setup allows for all the testing to be done locally using a database and user pool tied to your aws account. This ensures that nothing on the deployment end is messed with while changes are being made.
+
+Whenever there are changes made to the project configuration-- like a database schema change or user pool change-- the best practice is to run:
+```
+npx ampx sandbox
+```
+This command will update the test databases and userpools with their new structures. Also this should be running in the background whenever doing a test run of the web application. That command to run the local version of the web application is:
+```
+npm run dev
+```
+
+Make sure that any unit testing is done in the /src/tests directory.
 
 ## Deployment
 For detailed instructions on deploying your application, refer to the [deployment section](https://docs.amplify.aws/react/start/quickstart/#deploy-a-fullstack-app-to-aws) of our documentation.
