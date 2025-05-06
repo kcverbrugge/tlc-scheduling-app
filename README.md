@@ -54,6 +54,7 @@ amplify
 - auth: Authorization resources and configuration.
 - data: Database schema and configuration, some authorization as well.
 - enums: Tutor status enumerations for modularity and clean code.
+
 amplify-backup: Back up configurations of authorization and database resources
 get-courses: Holds the excel spreadsheet of all Colorado Mesa University's offered courses. Also holds the script to load courses into a specified DynamoDB course table.
 node_modules: contains all the local (not global) node modules used in this project. This folder should never be touched as it will automatically populate as new modules are installed.
