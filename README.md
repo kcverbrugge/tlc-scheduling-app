@@ -31,7 +31,6 @@ For detailed instructions on how to set up the local development environmewnt, r
 Tree generated using the command, ignored node modules since it has so many directories, added it later:
 ```bash
 tree -d -I "node_modules"
-```
 
 .
 ├── amplify
@@ -50,7 +49,7 @@ tree -d -I "node_modules"
     ├── services
     ├── tests
     └── utils
-    
+```
 amplify
 - auth: Authorization resources and configuration.
 - data: Database schema and configuration, some authorization as well.
