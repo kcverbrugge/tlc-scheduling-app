@@ -2,6 +2,12 @@
 
 This template equips you with a foundational React application integrated with AWS Amplify, streamlined for scalability and performance. It is ideal for developers looking to jumpstart their project with pre-configured AWS services like Cognito, AppSync, and DynamoDB.
 
+## COntributions
+- **Jack**: Linking backend service functions to front end, data aqquisition, testing, Cognito sign-in
+- **Kyle**: Building service functions, designing and implementing the database, organizing
+- **Quentin** All frontend features
+
+
 ## Features
 - **Authentication**: Setup with Amazon Cognito for secure user authentication.
 - **API**: Ready-to-use GraphQL endpoint with AWS AppSync.
