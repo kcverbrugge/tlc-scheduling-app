@@ -1,24 +1,31 @@
 ## Overview
-
-This template equips you with a foundational React application integrated with AWS Amplify, streamlined for scalability and performance. It is ideal for developers looking to jumpstart their project with pre-configured AWS services like Cognito, AppSync, and DynamoDB.
-
-## Features
-- **Authentication**: Setup with Amazon Cognito for secure user authentication.
-- **API**: Ready-to-use GraphQL endpoint with AWS AppSync.
-- **Database**: Real-time database powered by Amazon DynamoDB.
+This repository contains the Software Engineering (CSCI 490 Colorado Mesa University) project designed to demonstrate what a scheduling application would look like for the Tutorial Services department. This WIP application's role in the tutorial services is to make the lives of Frond Desk Receptionist and management easier and more intutitive by making tutor data easily viewable and easier to sift through. The vision of this project is to provide tutor filtering mechanisms by the classes they tutor, their availability, and names.
 
 ## How AWS Services are used
-### Creating a developer AWS account for this project.
-**Identity and Access Management (IAM)**
+**Identity and Access Management (IAM):** Used for creating project member AWS accounts and assigning privileges. More instruction for how to create and store access keys is provided later in the README.
 
-### Deployment setup
-**Appsync:**
+**Identity and Access Management (IAM):** Creates developer accounts under the project
 
-**DynamoDB:**
+**Appsync:** Stores the test and deployment environment APIs for their respective databases. This is where you can see the schema how it is laid out in DynamoDB language.
 
-**Cognito:**
+**DynamoDB:** Simply where the data is stored.
 
-**Amplify:**
+**Cognito:** Handles the test and deployment user pools. In each user pool, there are two user groups defined: Admin and FrontDesk.
+
+**Amplify:** Deployment end of things. This is where the URL can be changed, secrets can be stored, deployment checkups, and overall deployment information can be found.
+
+## Setting up an AWS Developer Account
+### AWS IAM Side
+Make sure you are in an Admin account associated with the project.
+
+1. In the IAM service, under the Access Management section on the left side of the screen, go to [Users](https://us-east-1.console.aws.amazon.com/iam/home?region=us-west-1#/users). Click create user.
+2. Enter an the new user's username, check "Provide user access to the AWS Management Console - optional". Select "I want to create an IAM user". Create a password for the onboarded developer, then check "Users must create a new password at next sign-in - Recommended", then click next. 
+3. Then select "Add user to group" then add them to the DevelopementTeam group, then click next.
+4. On the review and create page, double check the information, then select "Create user".
+5. In Retrieve Password, you can decide how you want to send the password to the project member, it is recommended to email the sign-in instructions to them.
+
+### Adding AWS Credentials Your Local Machine
+Now that developer account has been added to the AWS side of things, the AWS credentials need to be stored on your local machine. This allows you to make/adjust your testing environment (the sandbox databases and user pools).
 
 ## Amplify Documentation
 To find all the docs for the Amplify part of the project, go to the official [Amplify documentation](https://docs.amplify.aws/react/)
@@ -86,7 +93,12 @@ npm run dev
 Make sure that any unit testing is done in the /src/tests directory.
 
 ## Deployment
-For detailed instructions on deploying your application, refer to the [deployment section](https://docs.amplify.aws/react/start/quickstart/#deploy-a-fullstack-app-to-aws) of our documentation.
+Once a branch is merged with main and pushed to origin, Amplify automatically detects that the central repository has changed and starts a new deployment with the updates. This can be veiwed in the AWS Amplify dashboard and will take a couple minutes to deploy.
+
+### Failed to Deploy?
+If for some reason the deployment failed, do not worry because Amplify will keep web application in the state of the last successful deployment.
+
+The most helpful thing the look are the build/deployment logs which are found in that Amplify's deployment branch. You can view them as is via the dropdown menu or you can download them to sift through them that way. If there are ANY warnings or errors in the code (red or yellow squiggly) the code will push but will fail to deploy on Amplify.
 
 ### Security
 
