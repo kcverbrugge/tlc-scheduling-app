@@ -1,18 +1,10 @@
 ## Overview
 This repository contains the Software Engineering (CSCI 490 Colorado Mesa University) project designed to demonstrate what a scheduling application would look like for the Tutorial Services department. This WIP application's role in the tutorial services is to make the lives of Frond Desk Receptionist and management easier and more intutitive by making tutor data easily viewable and easier to sift through. The vision of this project is to provide tutor filtering mechanisms by the classes they tutor, their availability, and names.
 
-This template equips you with a foundational React application integrated with AWS Amplify, streamlined for scalability and performance. It is ideal for developers looking to jumpstart their project with pre-configured AWS services like Cognito, AppSync, and DynamoDB.
-
 ## Contributions
 - **Jack**: Linking backend service functions to front end, data aqquisition, testing, Cognito sign-in
 - **Kyle**: Building service functions, designing and implementing the database, organizing
 - **Quentin** All frontend features
-
-
-## Features
-- **Authentication**: Setup with Amazon Cognito for secure user authentication.
-- **API**: Ready-to-use GraphQL endpoint with AWS AppSync.
-- **Database**: Real-time database powered by Amazon DynamoDB.
 
 ## How AWS Services are used
 **Identity and Access Management (IAM):** Used for creating project member AWS accounts and assigning privileges. More instruction for how to create and store access keys is provided later in the README.
@@ -37,20 +29,52 @@ Make sure you are in an Admin account associated with the project.
 4. On the review and create page, double check the information, then select "Create user".
 5. In Retrieve Password, you can decide how you want to send the password to the project member, it is recommended to email the sign-in instructions to them.
 
+
+Now that you have an developer account for the project, you need to create an access key so you can connect to AWS services from your local machine. 
+
+1. Go to the [Users](https://us-east-1.console.aws.amazon.com/iam/home?region=us-west-1#/users) again, click on your user. Then go to "Security credentials." This is where you will find the "create access key" button.
+2. Select "Command Line Interface (CLI)", check the confirmation box, click next.
+3. There is no description tag value needed, click "Create access key."
+4. There will be two keys generated, the public and secret key. The public key you can always find on your user page in IAM. The secret key you need to copy into a secure place.
+
 ### Adding AWS Credentials Your Local Machine
-Now that developer account has been added to the AWS side of things, the AWS credentials need to be stored on your local machine. This allows you to make/adjust your testing environment (the sandbox databases and user pools).
+Now that developer account has been added to the AWS side of things, the AWS credentials need to be stored on your local machine. This allows you to make/adjust your testing environment (the sandbox databases and user pools). 
+
+1. First, install the aws-cli package:
+```bash
+$ sudo apt install awscli
+```
+2. Next, run the following command, it will ask for your public and secret access keys, as well as the region which should be set to us-west-1, and the default output format which should default to None after pressing enter.
+```bash
+$ aws configure
+```
+3. To test if the account is properly set up locally, run this command:
+```bash
+$ aws sts get-caller-identity
+```
+4. This will return the following output format if everything is correct:
+```bash
+{
+  "Account": "123456789012", 
+  "UserId": "AR#####:#####", 
+  "Arn": "arn:aws:sts::123456789012:assumed-role/role-name/role-session-name"
+}
+```
+5. If it does not output correctly, go back through the process and check that the right access keys were entered.
+
+If everything works fine, continue to setting up your local environment below.
 
 ## Amplify Documentation
 To find all the docs for the Amplify part of the project, go to the official [Amplify documentation](https://docs.amplify.aws/react/)
 
 ## Local Environment
 ### Setting up Local Environment
-For detailed instructions on how to set up the local development environmewnt, refer to [amplify docs](https://docs.amplify.aws/react/start/quickstart/#4-set-up-local-environment).
+For detailed instructions on how to set up the local development environmewnt, refer to [Amplify docs](https://docs.amplify.aws/react/start/quickstart/#4-set-up-local-environment).
 
 ### Local Project Structure and Details
 Tree generated using the command, ignored node modules since it has so many directories, added it later:
 ```bash
-tree -d -I "node_modules"
+$ tree -d -I "node_modules"
 
 .
 ├── amplify
@@ -96,11 +120,11 @@ The amplify local environment setup allows for all the testing to be done locall
 
 Whenever there are changes made to the project configuration-- like a database schema change or user pool change-- the best practice is to run:
 ```
-npx ampx sandbox
+$ npx ampx sandbox
 ```
 This command will update the test databases and userpools with their new structures. Also this should be running in the background whenever doing a test run of the web application. That command to run the local version of the web application is:
 ```
-npm run dev
+$ npm run dev
 ```
 
 Make sure that any unit testing is done in the /src/tests directory.
