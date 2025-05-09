@@ -1,6 +1,19 @@
 ## Overview
 This repository contains the Software Engineering (CSCI 490 Colorado Mesa University) project designed to demonstrate what a scheduling application would look like for the Tutorial Services department. This WIP application's role in the tutorial services is to make the lives of Frond Desk Receptionist and management easier and more intutitive by making tutor data easily viewable and easier to sift through. The vision of this project is to provide tutor filtering mechanisms by the classes they tutor, their availability, and names.
 
+This template equips you with a foundational React application integrated with AWS Amplify, streamlined for scalability and performance. It is ideal for developers looking to jumpstart their project with pre-configured AWS services like Cognito, AppSync, and DynamoDB.
+
+## Contributions
+- **Jack**: Linking backend service functions to front end, data aqquisition, testing, Cognito sign-in
+- **Kyle**: Building service functions, designing and implementing the database, organizing
+- **Quentin** All frontend features
+
+
+## Features
+- **Authentication**: Setup with Amazon Cognito for secure user authentication.
+- **API**: Ready-to-use GraphQL endpoint with AWS AppSync.
+- **Database**: Real-time database powered by Amazon DynamoDB.
+
 ## How AWS Services are used
 **Identity and Access Management (IAM):** Used for creating project member AWS accounts and assigning privileges. More instruction for how to create and store access keys is provided later in the README.
 
