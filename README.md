@@ -1,3 +1,4 @@
+# Tutorial Learning Center Scheduling App
 ## Overview
 This repository contains the Software Engineering (CSCI 490 Colorado Mesa University) project designed to demonstrate what a scheduling application would look like for the Tutorial Services department. This WIP application's role in the tutorial services is to make the lives of Frond Desk Receptionist and management easier and more intutitive by making tutor data easily viewable and easier to sift through. The vision of this project is to provide tutor filtering mechanisms by the classes they tutor, their availability, and names.
 
