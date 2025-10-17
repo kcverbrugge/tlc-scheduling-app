@@ -8,9 +8,7 @@ This repository contains the Software Engineering (CSCI 490 Colorado Mesa Univer
 - **Quentin** All frontend features
 
 ## How AWS Services are used
-**Identity and Access Management (IAM):** Used for creating project member AWS accounts and assigning privileges. More instruction for how to create and store access keys is provided later in the README.
-
-**Identity and Access Management (IAM):** Creates developer accounts under the project
+**Identity and Access Management (IAM):** Used for creating project member AWS accounts and assigning privileges. More instruction for how to create and store access keys is provided later in the README. Created developer accounts for working on the project and accessing AWS resources.
 
 **Appsync:** Stores the test and deployment environment APIs for their respective databases. This is where you can see the schema how it is laid out in DynamoDB language.
 
